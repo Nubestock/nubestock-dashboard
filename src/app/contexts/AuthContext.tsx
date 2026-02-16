@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { API_CONFIG } from '../config/api';
+import { API_CONFIG, getBackendUrl } from '../config/api';
 import { Permission } from '../utils/permissionUtils';
 import { User as ApiUser } from '../types/api';
 
@@ -148,8 +148,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     try {
+      const baseUrl = getBackendUrl();
+      if (!baseUrl) {
+        throw new Error('URL del backend no configurada. Ve a la pantalla de login desde la ruta donde configuraste el backend, o configúrala en Administración.');
+      }
       const loginUrl =
-        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}` +
+        `${baseUrl}${API_CONFIG.ENDPOINTS.LOGIN}` +
         (API_CONFIG.API_CODE ? `?code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '');
       console.log('Intentando login...', { email, url: loginUrl });
 

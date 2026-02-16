@@ -1,6 +1,7 @@
 // Configuración del backend: VITE_API_BASE_URL = ruta completa (ej. https://xxx.azurewebsites.net/api)
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  BASE_URL: typeof envBaseUrl === 'string' ? envBaseUrl : '',
   /** Código de invocación (query ?code=) que exige el backend. Viene de VITE_API_CODE. */
   API_CODE: import.meta.env.VITE_API_CODE || '',
   // Endpoints
@@ -20,23 +21,28 @@ export const API_CONFIG = {
   TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000', 10),
 };
 
-// Helper para obtener la configuración desde localStorage
+/** URL base del backend: localStorage (config del usuario) > env. Usar siempre esta función para login y resto de APIs. */
 export const getBackendUrl = (): string => {
   const saved = localStorage.getItem('nutregam_backend_url');
-  return saved || API_CONFIG.BASE_URL;
+  const base = (saved && saved.trim()) || API_CONFIG.BASE_URL || '';
+  return base;
 };
 
 // Helper para hacer requests con autenticación
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
+  const base = getBackendUrl();
+  if (!base) {
+    console.error('URL del backend no configurada. Ve a Administración y define la URL del backend.');
+    throw new Error('URL del backend no configurada. Configúrala en Administración.');
+  }
+
   const token = localStorage.getItem('token');
-  
   const headers = {
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
 
-  const base = getBackendUrl();
   const separator = endpoint.includes('?') ? '&' : '?';
   const codeParam = API_CONFIG.API_CODE ? `${separator}code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '';
   const fullUrl = `${base}${endpoint}${codeParam}`;
