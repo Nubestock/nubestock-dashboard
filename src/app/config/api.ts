@@ -2,7 +2,8 @@
 export const API_CONFIG = {
   // URL del backend desde variables de entorno
   BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://cnm3rvxd-7071.use2.devtunnels.ms/api',
-  
+  /** Código de invocación (query ?code=) que exige el backend. Viene de VITE_API_CODE. */
+  API_CODE: import.meta.env.VITE_API_CODE || '',
   // Endpoints
   ENDPOINTS: {
     LOGIN: '/auth/login',
@@ -36,7 +37,10 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
     ...options.headers,
   };
 
-  const fullUrl = `${getBackendUrl()}${endpoint}`;
+  const base = getBackendUrl();
+  const separator = endpoint.includes('?') ? '&' : '?';
+  const codeParam = API_CONFIG.API_CODE ? `${separator}code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '';
+  const fullUrl = `${base}${endpoint}${codeParam}`;
   console.log(`🌐 API Request: ${options.method || 'GET'} ${fullUrl}`);
   if (options.body) {
     console.log(`📦 Request Body:`, options.body);
