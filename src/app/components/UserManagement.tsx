@@ -32,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Plus, Edit, Trash2, Shield, Search, UserCog, AlertCircle, KeyRound, RefreshCw, Users, UserCheck, UserX, MoreVertical, Eye, Mail, Phone, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, Shield, Search, UserCog, AlertCircle, KeyRound, RefreshCw, Users, UserCheck, UserX, MoreVertical, Eye, EyeOff, Mail, Phone, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { useUsers, useRoles, useRolesWithPermissions, useUserPermissions, Role } from '../hooks/useUsers';
 import { Alert, AlertDescription } from './ui/alert';
@@ -71,6 +71,7 @@ export default function UserManagement() {
     password: '',
     phone: '',
   });
+  const [showAddUserPassword, setShowAddUserPassword] = useState(false);
 
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
   const [editUserForm, setEditUserForm] = useState({
@@ -891,12 +892,24 @@ export default function UserManagement() {
             </div>
             <div className="space-y-2">
               <Label>Contraseña</Label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={newUserForm.password}
-                onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-              />
+              <div className="relative">
+                <Input
+                  type={showAddUserPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={newUserForm.password}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowAddUserPassword(!showAddUserPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                  tabIndex={-1}
+                  aria-label={showAddUserPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                >
+                  {showAddUserPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               <p className="text-xs text-gray-500">Mínimo 8 caracteres</p>
             </div>
           </div>
