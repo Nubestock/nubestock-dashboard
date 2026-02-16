@@ -49,13 +49,34 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm ci
-      # Con proxy (public/staticwebapp.config.json): usar VITE_API_BASE_URL="/api" para misma origen y sin CORS
+      # VITE_API_BASE_URL = ruta completa del backend (desde secrets del environment)
       - name: Build (variables del environment)
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_API_TIMEOUT: ${{ secrets.VITE_API_TIMEOUT }}
           VITE_API_CODE: ${{ secrets.VITE_API_CODE }}
         run: npm run build
+      # Proxy /api/* → backend usando la misma VITE_API_BASE_URL (misma origen, sin CORS)
+      - name: Generate staticwebapp.config.json (proxy al backend)
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          if [ -n "$VITE_API_BASE_URL" ]; then
+            cat > dist/staticwebapp.config.json << EOF
+          {
+            "routes": [
+              {
+                "route": "/api/*",
+                "rewrite": "${VITE_API_BASE_URL}/*"
+              }
+            ]
+          }
+          EOF
+            echo "✅ staticwebapp.config.json generado con backend: $VITE_API_BASE_URL"
+            cat dist/staticwebapp.config.json
+          else
+            echo "ℹ️ VITE_API_BASE_URL no configurado - no se genera proxy"
+          fi
       - name: Check deploy size (Azure limit 15000 files)
         run: |
           COUNT=$(find dist -type f | wc -l)
