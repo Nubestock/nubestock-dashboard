@@ -1,0 +1,8 @@
+{
+  "routes": [
+    {
+      "route": "/api/*",
+      "rewrite": "https://nubestock-backend-api-hxg6amczd4bkcwbz.eastus2-01.azurewebsites.net/api/*"
+    }
+  ]
+}

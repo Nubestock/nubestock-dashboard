@@ -148,12 +148,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('🔐 Intentando login...', {
-        email,
-        url: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`,
-      });
+      const loginUrl =
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}` +
+        (API_CONFIG.API_CODE ? `?code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '');
+      console.log('🔐 Intentando login...', { email, url: loginUrl });
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`, {
+      const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,7 +1,11 @@
 // Configuración del backend
+// Con proxy (Static Web App): VITE_API_BASE_URL = "/api" → misma origen, sin CORS.
+// Sin proxy (dev u otro host): VITE_API_BASE_URL = URL completa del backend.
 export const API_CONFIG = {
-  // URL del backend desde variables de entorno
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://cnm3rvxd-7071.use2.devtunnels.ms/api',
+  BASE_URL:
+    import.meta.env.VITE_API_BASE_URL === '' || import.meta.env.VITE_API_BASE_URL === '/api'
+      ? '/api'
+      : (import.meta.env.VITE_API_BASE_URL || 'https://cnm3rvxd-7071.use2.devtunnels.ms/api'),
   /** Código de invocación (query ?code=) que exige el backend. Viene de VITE_API_CODE. */
   API_CODE: import.meta.env.VITE_API_CODE || '',
   // Endpoints
