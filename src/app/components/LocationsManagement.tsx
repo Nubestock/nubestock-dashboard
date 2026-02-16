@@ -288,7 +288,7 @@ export default function LocationsManagement() {
             <Label htmlFor="id_country">País *</Label>
             <Select
               value={provinceForm.id_country ? String(provinceForm.id_country) : ''}
-              onValueChange={(value) => setProvinceForm({ ...provinceForm, id_country: parseInt(value) })}
+              onValueChange={(value) => setProvinceForm({ ...provinceForm, id_country: Number.parseInt(value) })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona un país" />
@@ -340,7 +340,7 @@ export default function LocationsManagement() {
             <Label htmlFor="id_province">Provincia *</Label>
             <Select
               value={cityForm.id_province ? String(cityForm.id_province) : ''}
-              onValueChange={(value) => setCityForm({ ...cityForm, id_province: parseInt(value) })}
+              onValueChange={(value) => setCityForm({ ...cityForm, id_province: Number.parseInt(value) })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona una provincia" />

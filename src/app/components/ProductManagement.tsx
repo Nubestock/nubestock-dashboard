@@ -163,23 +163,23 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
       toast.error('La unidad de medida es requerida');
       return;
     }
-    if (!formData.quantity || parseFloat(formData.quantity) < 0) {
+    if (!formData.quantity || Number.parseFloat(formData.quantity) < 0) {
       toast.error('El stock actual es requerido y debe ser mayor o igual a 0');
       return;
     }
-    if (!formData.min_stock || parseFloat(formData.min_stock) < 0) {
+    if (!formData.min_stock || Number.parseFloat(formData.min_stock) < 0) {
       toast.error('El stock mínimo es requerido y debe ser mayor o igual a 0');
       return;
     }
-    if (!formData.price || parseFloat(formData.price) < 0) {
+    if (!formData.price || Number.parseFloat(formData.price) < 0) {
       toast.error('El precio es requerido y debe ser mayor o igual a 0');
       return;
     }
 
     // Validar decimales según el tipo
     if (newProductType === 'PF') {
-      const quantity = parseFloat(formData.quantity);
-      const minStock = parseFloat(formData.min_stock);
+      const quantity = Number.parseFloat(formData.quantity);
+      const minStock = Number.parseFloat(formData.min_stock);
       if (!Number.isInteger(quantity) || !Number.isInteger(minStock)) {
         toast.error('Los productos finales solo permiten cantidades enteras');
         return;
@@ -192,12 +192,12 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
         name: formData.name.trim(),
         sku: formData.sku.trim(),
         type: newProductType,
-        id_category: parseInt(formData.id_category),
-        id_origin: parseInt(formData.id_origin),
-        id_measure: parseInt(formData.id_measure),
-        quantity: parseFloat(formData.quantity),
-        min_stock: parseFloat(formData.min_stock),
-        price: parseFloat(formData.price),
+        id_category: Number.parseInt(formData.id_category),
+        id_origin: Number.parseInt(formData.id_origin),
+        id_measure: Number.parseInt(formData.id_measure),
+        quantity: Number.parseFloat(formData.quantity),
+        min_stock: Number.parseFloat(formData.min_stock),
+        price: Number.parseFloat(formData.price),
       };
 
       await createProduct(payload);
@@ -631,7 +631,7 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
                   />
                 </div>
                 <Select value={itemsPerPage.toString()} onValueChange={(value) => {
-                  setItemsPerPage(parseInt(value));
+                  setItemsPerPage(Number.parseInt(value));
                   setCurrentPage(1);
                 }}>
                   <SelectTrigger className="w-32">

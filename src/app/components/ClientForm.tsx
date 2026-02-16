@@ -35,14 +35,14 @@ export default function ClientForm({ open, onOpenChange, onSubmit, provinces, ci
 
   // Filtrar ciudades según la provincia seleccionada
   const availableCities = selectedProvince
-    ? cities.filter(c => c.id_province === parseInt(selectedProvince))
+    ? cities.filter(c => c.id_province === Number.parseInt(selectedProvince))
     : [];
 
   const handleProvinceChange = (value: string) => {
     setSelectedProvince(value);
     setFormData({
       ...formData,
-      id_province: parseInt(value),
+      id_province: Number.parseInt(value),
       id_city: 0, // Reset city when province changes
     });
   };
@@ -263,7 +263,7 @@ export default function ClientForm({ open, onOpenChange, onSubmit, provinces, ci
                 <Label htmlFor="city">Ciudad *</Label>
                 <Select
                   value={formData.id_city.toString()}
-                  onValueChange={(value) => setFormData({ ...formData, id_city: parseInt(value) })}
+                  onValueChange={(value) => setFormData({ ...formData, id_city: Number.parseInt(value) })}
                   disabled={!selectedProvince}
                 >
                   <SelectTrigger>
@@ -309,7 +309,7 @@ export default function ClientForm({ open, onOpenChange, onSubmit, provinces, ci
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        credit_limit: e.target.value ? parseFloat(e.target.value) : null,
+                        credit_limit: e.target.value ? Number.parseFloat(e.target.value) : null,
                       })
                     }
                     placeholder="5000.00"
@@ -327,7 +327,7 @@ export default function ClientForm({ open, onOpenChange, onSubmit, provinces, ci
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        credit_days: e.target.value ? parseInt(e.target.value) : null,
+                        credit_days: e.target.value ? Number.parseInt(e.target.value) : null,
                       })
                     }
                     placeholder="30"

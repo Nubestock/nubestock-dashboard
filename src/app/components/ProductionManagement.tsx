@@ -96,8 +96,8 @@ export default function ProductionManagement() {
     if (value === undefined || value === null) return 0;
     if (typeof value === 'number') return value;
     // Convertir string a número y manejar casos donde vienen mal formateados
-    const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ''));
-    return isNaN(parsed) ? 0 : parsed;
+    const parsed = Number.parseFloat(String(value).replace(/[^\d.-]/g, ''));
+    return Number.isNaN(parsed) ? 0 : parsed;
   };
 
   // Calcular totales reales de materiales consumidos

@@ -167,11 +167,11 @@ export default function BulkClientUpload({
             email: String(row['Correo Electrónico'] || '').trim(),
             phone: String(row['Teléfono'] || '').trim(),
             address: String(row['Dirección'] || '').trim(),
-            id_province: parseInt(String(row['ID Provincia'] || '0')),
-            id_city: parseInt(String(row['ID Ciudad'] || '0')),
+            id_province: Number.parseInt(String(row['ID Provincia'] || '0')),
+            id_city: Number.parseInt(String(row['ID Ciudad'] || '0')),
             requires_credit: (row['Requiere Crédito (SI/NO)'] || '').toString().toUpperCase().trim() === 'SI',
-            credit_limit: row['Límite de Crédito'] ? parseFloat(String(row['Límite de Crédito'])) : null,
-            credit_days: row['Días de Crédito'] ? parseInt(String(row['Días de Crédito'])) : null,
+            credit_limit: row['Límite de Crédito'] ? Number.parseFloat(String(row['Límite de Crédito'])) : null,
+            credit_days: row['Días de Crédito'] ? Number.parseInt(String(row['Días de Crédito'])) : null,
           };
         });
 
@@ -204,8 +204,8 @@ export default function BulkClientUpload({
     if (columnKey === 'requires_credit') {
       row[columnKey] = value.toUpperCase() === 'SI';
     } else if (columnKey === 'credit_limit' || columnKey === 'credit_days') {
-      const numValue = parseFloat(value);
-      row[columnKey as 'credit_limit' | 'credit_days'] = isNaN(numValue) ? null : numValue;
+      const numValue = Number.parseFloat(value);
+      row[columnKey as 'credit_limit' | 'credit_days'] = Number.isNaN(numValue) ? null : numValue;
     } else {
       (row as any)[columnKey] = value;
     }
@@ -312,7 +312,7 @@ export default function BulkClientUpload({
     // Reindexar errores
     const reindexedErrors: Record<number, string[]> = {};
     Object.keys(newErrors).forEach((key) => {
-      const oldIndex = parseInt(key);
+      const oldIndex = Number.parseInt(key);
       const newIndex = oldIndex > index ? oldIndex - 1 : oldIndex;
       reindexedErrors[newIndex] = newErrors[oldIndex];
     });
@@ -588,7 +588,7 @@ export default function BulkClientUpload({
                 <div className="space-y-2">
                   {Object.entries(validationErrors).map(([index, errors]) => (
                     <div key={index} className="text-sm text-red-700">
-                      <span className="font-semibold">Fila {parseInt(index) + 1}:</span>
+                      <span className="font-semibold">Fila {Number.parseInt(index) + 1}:</span>
                       <ul className="list-disc list-inside ml-4">
                         {errors.map((error, i) => (
                           <li key={i}>{error}</li>

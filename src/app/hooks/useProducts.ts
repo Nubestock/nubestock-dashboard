@@ -112,8 +112,8 @@ export interface BulkProductResponse {
 function normalizeProduct(product: any): Product {
   return {
     ...product,
-    quantity: typeof product.quantity === 'string' ? parseFloat(product.quantity) : product.quantity,
-    min_stock: typeof product.min_stock === 'string' ? parseFloat(product.min_stock) : product.min_stock,
+    quantity: typeof product.quantity === 'string' ? Number.parseFloat(product.quantity) : product.quantity,
+    min_stock: typeof product.min_stock === 'string' ? Number.parseFloat(product.min_stock) : product.min_stock,
   };
 }
 

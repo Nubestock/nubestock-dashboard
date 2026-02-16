@@ -101,10 +101,10 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
     const sku = skuMatch ? skuMatch[1] : 'N/A';
     
     const stockMatch = alert.alert_message.match(/Stock actual:\s*(\d+)/);
-    const currentStock = stockMatch ? parseInt(stockMatch[1]) : 0;
+    const currentStock = stockMatch ? Number.parseInt(stockMatch[1]) : 0;
     
     const minMatch = alert.alert_message.match(/Mínimo requerido:\s*(\d+)/);
-    const minRequired = minMatch ? parseInt(minMatch[1]) : 0;
+    const minRequired = minMatch ? Number.parseInt(minMatch[1]) : 0;
     
     const deficit = minRequired - currentStock;
     

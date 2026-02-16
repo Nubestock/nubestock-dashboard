@@ -304,7 +304,7 @@ export default function ProductionReport() {
                     <TableCell>{record.plannedQuantity} kg</TableCell>
                     <TableCell>{record.actualQuantity} kg</TableCell>
                     <TableCell>
-                      <span className={parseFloat(compliance) >= 95 ? 'text-green-600' : 'text-yellow-600'}>
+                      <span className={Number.parseFloat(compliance) >= 95 ? 'text-green-600' : 'text-yellow-600'}>
                         {compliance}%
                       </span>
                     </TableCell>
@@ -352,8 +352,8 @@ export default function ProductionReport() {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full ${parseFloat(efficiency) >= 95 ? 'bg-green-500' : 'bg-yellow-500'}`}
-                      style={{ width: `${Math.min(parseFloat(efficiency), 100)}%` }}
+                      className={`h-2 rounded-full ${Number.parseFloat(efficiency) >= 95 ? 'bg-green-500' : 'bg-yellow-500'}`}
+                      style={{ width: `${Math.min(Number.parseFloat(efficiency), 100)}%` }}
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">Eficiencia: {efficiency}%</p>

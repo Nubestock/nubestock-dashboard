@@ -62,8 +62,8 @@ export function CorporateBadge({ variant, children, icon = false, className = ''
 // Helper específico para estados de stock
 export function StockBadge({ current, minimum }: { current: number | string; minimum: number | string }) {
   // Convertir a números para asegurar comparaciones correctas
-  const currentNum = typeof current === 'string' ? parseFloat(current) : current;
-  const minimumNum = typeof minimum === 'string' ? parseFloat(minimum) : minimum;
+  const currentNum = typeof current === 'string' ? Number.parseFloat(current) : current;
+  const minimumNum = typeof minimum === 'string' ? Number.parseFloat(minimum) : minimum;
 
   if (currentNum <= 0) {
     return (

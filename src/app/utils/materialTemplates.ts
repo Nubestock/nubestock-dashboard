@@ -268,9 +268,9 @@ export function convertToMaterialData(rawData: any[], defaultOriginId: string) {
     const code = row['Código'] || row['Codigo'] || row['codigo'] || row['Code'] || '';
     const type = row['Tipo'] || row['tipo'] || row['Type'] || 'raw';
     const unit = row['Unidad de Medida'] || row['Unidad'] || row['unidad'] || row['Unit'] || 'kg';
-    const cost = parseFloat(row['Costo por Unidad'] || row['Costo'] || row['costo'] || row['Cost'] || '0');
+    const cost = Number.parseFloat(row['Costo por Unidad'] || row['Costo'] || row['costo'] || row['Cost'] || '0');
     const supplier = row['Proveedor'] || row['proveedor'] || row['Supplier'] || '';
-    const minStock = parseFloat(row['Stock Mínimo'] || row['Stock Minimo'] || row['Stock'] || row['stock'] || '0');
+    const minStock = Number.parseFloat(row['Stock Mínimo'] || row['Stock Minimo'] || row['Stock'] || row['stock'] || '0');
 
     return {
       material_name: name.toString().trim(),
@@ -278,9 +278,9 @@ export function convertToMaterialData(rawData: any[], defaultOriginId: string) {
       material_type: type.toString().toLowerCase().trim(),
       idorigin: defaultOriginId,
       unit_of_measure: unit.toString().trim(),
-      cost_per_unit: isNaN(cost) ? 0 : cost,
+      cost_per_unit: Number.isNaN(cost) ? 0 : cost,
       supplier: supplier.toString().trim(),
-      minimum_stock: isNaN(minStock) ? 0 : minStock,
+      minimum_stock: Number.isNaN(minStock) ? 0 : minStock,
     };
   }).filter(material => 
     // Filtrar filas vacías

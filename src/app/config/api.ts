@@ -18,7 +18,7 @@ export const API_CONFIG = {
   },
   
   // Timeout por defecto (en milisegundos)
-  TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '10000', 10),
+  TIMEOUT: Number.parseInt(import.meta.env.VITE_API_TIMEOUT || '10000', 10),
 };
 
 /** URL base del backend: localStorage (config del usuario) > env. Usar siempre esta función para login y resto de APIs. */
