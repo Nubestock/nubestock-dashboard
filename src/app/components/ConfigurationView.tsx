@@ -206,7 +206,7 @@ export default function ConfigurationView() {
                     id="backendUrl"
                     value={tempUrl}
                     onChange={(e) => setTempUrl(e.target.value)}
-                    placeholder="https://cnm3rvxd-7071.use2.devtunnels.ms/api"
+                    placeholder={import.meta.env.VITE_API_BASE_URL}
                   />
                   <Button 
                     onClick={handleSaveUrl}

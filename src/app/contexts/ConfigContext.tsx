@@ -39,7 +39,7 @@ interface ConfigProviderProps {
 export function ConfigProvider({ children }: ConfigProviderProps) {
   const [backendUrl, setBackendUrlState] = useState<string>(() => {
     const saved = localStorage.getItem('nutregam_backend_url');
-    return saved || 'https://cnm3rvxd-7071.use2.devtunnels.ms/api';
+    return saved;
   });
 
   const [isBackendHealthy, setIsBackendHealthy] = useState<boolean>(false);

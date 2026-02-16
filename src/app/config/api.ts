@@ -1,6 +1,6 @@
 // Configuración del backend: VITE_API_BASE_URL = ruta completa (ej. https://xxx.azurewebsites.net/api)
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://cnm3rvxd-7071.use2.devtunnels.ms/api',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL,
   /** Código de invocación (query ?code=) que exige el backend. Viene de VITE_API_CODE. */
   API_CODE: import.meta.env.VITE_API_CODE || '',
   // Endpoints
