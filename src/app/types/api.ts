@@ -83,7 +83,7 @@ export interface User {
   full_name?: string; // Campo adicional del backend
   id_role?: number; // Campo adicional del backend
   role_name?: string; // Campo adicional del backend
-  is_active: boolean; // ⚠️ Backend usa "is_active" (con guión bajo)
+  is_active: boolean; // Backend usa "is_active" (con guión bajo)
   last_login?: string; // ISO date-time
   creation_date?: string; // ISO date-time
   modification_date?: string; // ISO date-time
@@ -95,14 +95,14 @@ export interface UserCreate {
   email: string;
   password: string;
   phone?: string;
-  is_active?: boolean; // ⚠️ El endpoint /auth/register acepta is_active
+  is_active?: boolean; // El endpoint /auth/register acepta is_active
 }
 
 export interface UserUpdate {
   name?: string;
   email?: string;
   phone?: string;
-  is_active?: boolean; // ⚠️ El endpoint PUT /users/:id acepta is_active
+  is_active?: boolean; // El endpoint PUT /users/:id acepta is_active
 }
 
 // ============================================================================

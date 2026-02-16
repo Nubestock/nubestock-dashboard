@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -78,9 +78,10 @@ import { useProducts } from '../hooks/useProducts';
 
 // Interfaz para materiales en el formulario
 interface RecipeMaterialRow {
-  id_product: number; // Cambiar de idmaterial a id_product según Swagger v2.0
-  tempId: string; // ID temporal para manejar la tabla
-  id_recipe?: number; // ID de receta real (cuando se edita una existente)
+  id_product: number;
+  quantity: number;
+  tempId: string;
+  id_recipe?: number;
 }
 
 export default function RecipeManagement() {
@@ -117,13 +118,13 @@ export default function RecipeManagement() {
   // Abrir modal para crear/editar receta completa
   const handleOpenDialog = async (productId?: string) => {
     // Refrescar materiales antes de abrir el diálogo
-    console.log('🔄 Refrescando materiales antes de abrir el diálogo...');
+    console.log('Refrescando materiales antes de abrir el diálogo...');
     await refetchMaterials();
     
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('🔍 ABRIENDO MODAL DE RECETA');
+    console.log('ABRIENDO MODAL DE RECETA');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📊 Estado de materiales:');
+    console.log('Estado de materiales:');
     console.log('   - Total materiales disponibles:', materials.length);
     console.log('   - Cargando:', materialsLoading);
     console.log('   - Error:', materialsError);
@@ -140,18 +141,17 @@ export default function RecipeManagement() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     if (productId) {
-      // Modo edición: cargar receta existente
+      // Modo edición: cargar receta existente desde productsWithRecipes
       setEditingProductId(productId);
       setSelectedProductForRecipe(productId);
-      
-      // Cargar materiales existentes de la receta
-      const productRecipes = recipes.filter(r => r.idfinal_product === productId);
-      const loadedMaterials: RecipeMaterialRow[] = productRecipes.map((recipe) => ({
-        id_product: recipe.idmaterial,
-        tempId: recipe.idrecipe, // Usar el ID real como tempId en edición
-        id_recipe: recipe.idrecipe, // Guardar el ID real de la receta
-      }));
-      
+      const productIdNum = Number(productId);
+      const data = recipesByProduct[productIdNum];
+      const loadedMaterials: RecipeMaterialRow[] = data?.materials?.map((m) => ({
+        id_product: m.id_product ?? m.id,
+        quantity: m.quantity ?? 0,
+        tempId: String(m.id),
+        id_recipe: m.id,
+      })) ?? [];
       setRecipeMaterials(loadedMaterials);
     } else {
       // Modo creación: formulario vacío
@@ -166,25 +166,17 @@ export default function RecipeManagement() {
   const handleAddMaterialRow = () => {
     const newRow: RecipeMaterialRow = {
       id_product: 0,
+      quantity: 0,
       tempId: `temp-${Date.now()}-${Math.random()}`,
     };
     setRecipeMaterials([...recipeMaterials, newRow]);
   };
 
   // Actualizar un material en la fila
-  const handleUpdateMaterialRow = (tempId: string, field: keyof RecipeMaterialRow, value: any) => {
+  const handleUpdateMaterialRow = (tempId: string, field: keyof RecipeMaterialRow, value: string | number) => {
     setRecipeMaterials(recipeMaterials.map(row => {
       if (row.tempId === tempId) {
-        if (field === 'id_product') {
-          // Actualizar también la unidad de medida cuando cambia el material
-          const material = materials.find(m => m.idmaterial === value);
-          return { 
-            ...row, 
-            id_product: value,
-            unit_of_measure: material?.unit_of_measure || 'kg'
-          };
-        }
-        return { ...row, [field]: value };
+        return { ...row, [field]: field === 'id_product' || field === 'quantity' || field === 'id_recipe' ? Number(value) : value };
       }
       return row;
     }));
@@ -215,7 +207,7 @@ export default function RecipeManagement() {
       );
 
       if (invalidRows.length > 0) {
-        console.error('❌ Filas inválidas encontradas:', invalidRows);
+        console.error('Filas inválidas encontradas:', invalidRows);
         toast.error('Completa todos los materiales con cantidad válida');
         return;
       }
@@ -230,12 +222,12 @@ export default function RecipeManagement() {
       }
 
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('✅ VALIDACIÓN COMPLETA - Preparando envío al backend');
+      console.log('VALIDACIÓN COMPLETA - Preparando envío al backend');
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('📊 Datos del formulario:');
+      console.log('Datos del formulario:');
       console.log('  - Producto ID:', selectedProductForRecipe);
       console.log('  - Total materiales:', recipeMaterials.length);
-      console.log('\n📦 Materiales seleccionados:');
+      console.log('\nMateriales seleccionados:');
       recipeMaterials.forEach((row, idx) => {
         const material = materials.find(m => m.id === row.id_product);
         console.log(`  ${idx + 1}. Material:`, {
@@ -249,20 +241,21 @@ export default function RecipeManagement() {
 
       // Si estamos creando una nueva receta, usar el endpoint que acepta múltiples materiales
       if (!editingProductId) {
-        const recipeRequest = {
-          id_product: Number(selectedProductForRecipe), // ID del producto final
+        const recipeRequest: CreateRecipeData = {
+          id_product: Number(selectedProductForRecipe),
           materials: recipeMaterials.map(row => ({
-            id_product: Number(row.id_product), // ⚠️ Solo id_product para POST, sin quantity_required
+            id_product: Number(row.id_product),
+            quantity: Number(row.quantity),
           })),
         };
 
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📤 REQUEST BODY - CREAR RECETA (POST)');
+        console.log('REQUEST BODY - CREAR RECETA (POST)');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📋 Body completo:');
+        console.log('Body completo:');
         console.log(JSON.stringify(recipeRequest, null, 2));
         console.log('');
-        console.log('🔍 Detalle por campo:');
+        console.log('Detalle por campo:');
         console.log('   └─ id_product (Producto Final):', recipeRequest.id_product, `(tipo: ${typeof recipeRequest.id_product})`);
         console.log('   └─ materials (total):', recipeRequest.materials.length);
         recipeRequest.materials.forEach((mat, idx) => {
@@ -270,14 +263,14 @@ export default function RecipeManagement() {
           console.log(`      ${idx + 1}. ${materialInfo?.name || 'Desconocido'} (${materialInfo?.sku || 'N/A'})`);
           console.log(`         - id_product: ${mat.id_product} (tipo: ${typeof mat.id_product})`);
         });
-        console.log('⚠️  NOTA: POST no envía quantity_required según Swagger');
+        console.log('NOTA: POST no envía quantity_required según Swagger');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         await createRecipeWithMaterials(recipeRequest);
         toast.success('Receta creada correctamente');
         
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('✅ RECETA CREADA - Recargando lista de recetas...');
+        console.log('RECETA CREADA - Recargando lista de recetas...');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       } else {
         // ⭐ USAR EL NUEVO ENDPOINT RECOMENDADO para actualizar recetas completas
@@ -287,15 +280,15 @@ export default function RecipeManagement() {
         }));
 
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📤 ACTUALIZANDO RECETA COMPLETA');
+        console.log('ACTUALIZANDO RECETA COMPLETA');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📋 Body completo:');
+        console.log('Body completo:');
         console.log(JSON.stringify({
           id_product: Number(selectedProductForRecipe),
           materials: materialsToUpdate
         }, null, 2));
         console.log('');
-        console.log('🔍 Detalle por campo:');
+        console.log('Detalle por campo:');
         console.log('   └─ id_product (Producto Final):', Number(selectedProductForRecipe), `(tipo: ${typeof Number(selectedProductForRecipe)})`);
         console.log('   └─ materials (total):', materialsToUpdate.length);
         materialsToUpdate.forEach((mat, idx) => {
@@ -306,9 +299,9 @@ export default function RecipeManagement() {
         });
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-        const response = await updateCompleteRecipe(selectedProductForRecipe, materialsToUpdate);
+        const response = await updateCompleteRecipe(Number(selectedProductForRecipe), materialsToUpdate);
 
-        console.log('✅ Resultado de actualización:');
+        console.log('Resultado de actualización:');
         console.log('   - Agregados:', response.data?.changes?.added || 0);
         console.log('   - Actualizados:', response.data?.changes?.updated || 0);
         console.log('   - Eliminados:', response.data?.changes?.removed || 0);
@@ -329,7 +322,7 @@ export default function RecipeManagement() {
   const handleDeleteRecipe = async (idrecipe: string, materialName: string) => {
     if (confirm(`¿Estás seguro de eliminar "${materialName}" de esta receta?`)) {
       try {
-        await deleteRecipe(idrecipe);
+        await deleteRecipe(Number(idrecipe));
         toast.success('Material eliminado de la receta');
         refetch();
       } catch (error) {
@@ -618,7 +611,7 @@ export default function RecipeManagement() {
                             </h3>
                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-xs sm:text-sm text-gray-600">
                               <code className="bg-gray-100 px-2 py-0.5 rounded text-xs w-fit">
-                                {data.product_code}
+                                {data.sku}
                               </code>
                               <span className="flex items-center gap-1">
                                 <Layers className="h-3 w-3 sm:h-3.5 sm:w-3.5" />

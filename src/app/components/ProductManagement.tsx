@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React ,{ useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -14,7 +14,7 @@ import { useProducts, useCategories, useOrigins, useMeasures, Product } from '..
 import ProductDetail from './ProductDetail';
 import BulkProductUpload from './BulkProductUpload';
 import { StockBadge } from './ui/corporate-badge';
-import * as XLSX from 'xlsx';
+import { createWorkbook, addSheetFromJson, addSheetFromAoa, downloadWorkbook } from '../utils/excel';
 import { API_CONFIG, apiRequest } from '../config/api';
 
 interface ProductManagementProps {
@@ -230,14 +230,14 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
         endpoint += `&search=${encodeURIComponent(debouncedSearch.trim())}`;
       }
 
-      console.log('📊 Exportando productos desde:', endpoint);
+      console.log('Exportando productos desde:', endpoint);
 
       // Usar apiRequest en lugar de fetch
       const response = await apiRequest(endpoint, {
         method: 'GET',
       });
 
-      console.log('📡 Respuesta de exportación:', response);
+      console.log('Respuesta de exportación:', response);
 
       if (!response || !response.success || !response.data) {
         throw new Error('No se recibieron datos válidos del servidor');
@@ -263,9 +263,9 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
         'Precio *': product.price,
       }));
 
-      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = createWorkbook();
+      addSheetFromJson(wb, 'Productos', exportData);
 
-      // Agregar hoja de catálogos para referencia
       const helpData = [
         ['CATÁLOGO DE CATEGORÍAS'],
         ['ID', 'Nombre'],
@@ -279,21 +279,16 @@ export default function ProductManagement({ initialProductId, onProductViewed }:
         ['ID', 'Nombre', 'Abreviación'],
         ...measures.map((m) => [m.id, m.name, m.abbreviation]),
       ];
-
-      const wsHelp = XLSX.utils.aoa_to_sheet(helpData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Productos');
-      XLSX.utils.book_append_sheet(wb, wsHelp, 'Catálogos');
+      addSheetFromAoa(wb, 'Catálogos', helpData);
 
       const timestamp = new Date().toISOString().split('T')[0];
-      const fileName = productType === 'PF' 
-        ? `productos_finales_${timestamp}.xlsx` 
+      const fileName = productType === 'PF'
+        ? `productos_finales_${timestamp}.xlsx`
         : `materias_primas_${timestamp}.xlsx`;
-      
-      XLSX.writeFile(wb, fileName);
+      await downloadWorkbook(wb, fileName);
       toast.success(`${allProducts.length} producto${allProducts.length > 1 ? 's' : ''} exportado${allProducts.length > 1 ? 's' : ''} exitosamente`);
     } catch (error: any) {
-      console.error('❌ Error al exportar productos:', error);
+      console.error('Error al exportar productos:', error);
       toast.error(error.message || 'Error al exportar los productos');
     }
   };

@@ -1,4 +1,12 @@
-import * as XLSX from 'xlsx';
+import {
+  createWorkbook,
+  addSheetFromAoa,
+  addSheetFromJson,
+  downloadWorkbook,
+  loadWorkbook,
+  findSheetByName,
+  readSheetToJson,
+} from './excel';
 
 // Datos de ejemplo para la plantilla
 export const TEMPLATE_DATA = [
@@ -69,53 +77,36 @@ export const INSTRUCTIONS = `INSTRUCCIONES PARA CARGA MASIVA DE MATERIALES
    Ver las filas de ejemplo en la pestaña "Datos de Ejemplo"
 `;
 
+const MATERIAL_COLUMN_WIDTHS = [25, 15, 15, 20, 18, 25, 15];
+
 /**
  * Genera y descarga un archivo Excel con la plantilla de materiales
  */
-export function downloadExcelTemplate() {
-  // Crear un nuevo libro de trabajo
-  const wb = XLSX.utils.book_new();
-
-  // Crear hoja con instrucciones
-  const instructionsSheet = XLSX.utils.aoa_to_sheet(
-    INSTRUCTIONS.split('\n').map(line => [line])
+export async function downloadExcelTemplate() {
+  const wb = createWorkbook();
+  addSheetFromAoa(
+    wb,
+    'Instrucciones',
+    INSTRUCTIONS.split('\n').map((line) => [line])
   );
-  XLSX.utils.book_append_sheet(wb, instructionsSheet, 'Instrucciones');
-
-  // Crear hoja con datos de ejemplo
-  const dataSheet = XLSX.utils.json_to_sheet(TEMPLATE_DATA);
-  
-  // Ajustar el ancho de las columnas
-  const columnWidths = [
-    { wch: 25 }, // Nombre del Material
-    { wch: 15 }, // Código
-    { wch: 15 }, // Tipo
-    { wch: 20 }, // Unidad de Medida
-    { wch: 18 }, // Costo por Unidad
-    { wch: 25 }, // Proveedor
-    { wch: 15 }, // Stock Mínimo
-  ];
-  dataSheet['!cols'] = columnWidths;
-
-  XLSX.utils.book_append_sheet(wb, dataSheet, 'Datos de Ejemplo');
-
-  // Crear hoja vacía para que el usuario llene
-  const emptySheet = XLSX.utils.json_to_sheet([
-    {
-      'Nombre del Material': '',
-      'Código': '',
-      'Tipo': '',
-      'Unidad de Medida': '',
-      'Costo por Unidad': '',
-      'Proveedor': '',
-      'Stock Mínimo': ''
-    }
-  ]);
-  emptySheet['!cols'] = columnWidths;
-  XLSX.utils.book_append_sheet(wb, emptySheet, 'Mis Materiales');
-
-  // Descargar el archivo
-  XLSX.writeFile(wb, 'Plantilla_Materiales_Nutregam.xlsx');
+  addSheetFromJson(wb, 'Datos de Ejemplo', TEMPLATE_DATA as Record<string, unknown>[], MATERIAL_COLUMN_WIDTHS);
+  addSheetFromJson(
+    wb,
+    'Mis Materiales',
+    [
+      {
+        'Nombre del Material': '',
+        'Código': '',
+        'Tipo': '',
+        'Unidad de Medida': '',
+        'Costo por Unidad': '',
+        'Proveedor': '',
+        'Stock Mínimo': '',
+      },
+    ] as Record<string, unknown>[],
+    MATERIAL_COLUMN_WIDTHS
+  );
+  await downloadWorkbook(wb, 'Plantilla_Materiales_Nutregam.xlsx');
 }
 
 /**
@@ -173,42 +164,18 @@ export function downloadCSVTemplate() {
  * Lee un archivo Excel y retorna un array de materiales
  */
 export async function parseExcelFile(file: File): Promise<any[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      try {
-        const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: 'binary' });
-
-        // Buscar la primera hoja que tenga datos (priorizar "Mis Materiales")
-        let sheetName = workbook.SheetNames.find(name => 
-          name.toLowerCase().includes('mis materiales') || 
-          name.toLowerCase().includes('materiales')
-        ) || workbook.SheetNames[0];
-
-        // Si solo encontramos las hojas de ejemplo, usar cualquier hoja con datos
-        if (sheetName === 'Instrucciones' || sheetName === 'Datos de Ejemplo') {
-          sheetName = workbook.SheetNames.find(name => 
-            name !== 'Instrucciones' && name !== 'Datos de Ejemplo'
-          ) || workbook.SheetNames[0];
-        }
-
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-        resolve(jsonData);
-      } catch (error) {
-        reject(new Error('Error al leer el archivo Excel: ' + (error as Error).message));
-      }
-    };
-
-    reader.onerror = () => {
-      reject(new Error('Error al leer el archivo'));
-    };
-
-    reader.readAsBinaryString(file);
-  });
+  const buffer = await file.arrayBuffer();
+  const workbook = await loadWorkbook(buffer);
+  const sheetName =
+    findSheetByName(workbook, ['mis materiales', 'materiales']) ??
+    workbook.worksheets.find(
+      (ws) =>
+        ws.name !== 'Instrucciones' && ws.name !== 'Datos de Ejemplo'
+    )?.name ??
+    workbook.worksheets[0]?.name;
+  if (!sheetName) return [];
+  const jsonData = readSheetToJson(workbook, sheetName);
+  return jsonData;
 }
 
 /**

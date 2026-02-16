@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React , { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -105,13 +105,13 @@ export default function ClientForm({ open, onOpenChange, onSubmit, provinces, ci
         dataToSubmit.credit_days = formData.credit_days;
       }
 
-      console.log('📤 Enviando cliente:', dataToSubmit);
+      console.log('Enviando cliente:', dataToSubmit);
 
       await onSubmit(dataToSubmit);
       toast.success('Cliente creado exitosamente');
       handleClose();
     } catch (error) {
-      console.error('❌ Error al crear cliente:', error);
+      console.error('Error al crear cliente:', error);
       toast.error(error instanceof Error ? error.message : 'Error al crear cliente');
     } finally {
       setIsSubmitting(false);

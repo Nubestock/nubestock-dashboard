@@ -9,7 +9,7 @@ import { Download, Calendar, Users, TrendingUp, DollarSign, Package, RefreshCw }
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { toast } from 'sonner';
 import { useDailySalesReport, useClientSalesReport, useTopProductsReport } from '../hooks/useSalesReports';
-import * as XLSX from 'xlsx';
+import { createWorkbook, addSheetFromJson, downloadWorkbook } from '../utils/excel';
 
 export default function SalesReports() {
   const [reportType, setReportType] = useState<'daily' | 'byClient' | 'byProduct'>('daily');
@@ -82,9 +82,9 @@ export default function SalesReports() {
   })) || [];
 
   // Exportar a Excel
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     try {
-      let dataToExport: any[] = [];
+      let dataToExport: Record<string, unknown>[] = [];
       let sheetName = '';
 
       if (reportType === 'daily' && dailyReport.data) {
@@ -129,21 +129,16 @@ export default function SalesReports() {
         return;
       }
 
-      // Crear hoja de trabajo
-      const ws = XLSX.utils.json_to_sheet(dataToExport);
-
-      // Ajustar ancho de columnas
       const maxWidth = 35;
-      ws['!cols'] = Object.keys(dataToExport[0]).map(() => ({ wch: maxWidth }));
-
-      // Crear libro de trabajo
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, sheetName);
-
-      // Descargar archivo
+      const wb = createWorkbook();
+      addSheetFromJson(
+        wb,
+        sheetName,
+        dataToExport,
+        Object.keys(dataToExport[0]).map(() => maxWidth)
+      );
       const fileName = `Reporte_${sheetName.replace(' ', '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(wb, fileName);
-      
+      await downloadWorkbook(wb, fileName);
       toast.success('Reporte exportado exitosamente');
     } catch (error) {
       console.error('Error al exportar:', error);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React ,{ useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -38,20 +38,20 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
     setLoading(true);
 
     try {
-      console.log('📧 Solicitando restablecimiento de contraseña para:', email);
+      console.log('Solicitando restablecimiento de contraseña para:', email);
       
       const response = await apiRequest('/auth/reset-password', {
         method: 'POST',
         body: JSON.stringify({ email }),
       });
 
-      console.log('✅ Respuesta del servidor:', response);
+      console.log('Respuesta del servidor:', response);
 
       // Siempre mostrar éxito por seguridad (no revelar si el email existe o no)
       setSuccess(true);
       toast.success('Solicitud enviada exitosamente');
     } catch (err) {
-      console.error('❌ Error al solicitar restablecimiento:', err);
+      console.error('Error al solicitar restablecimiento:', err);
       
       // Por seguridad, siempre mostrar éxito incluso si hay error
       // Esto evita que atacantes puedan verificar qué emails existen en el sistema

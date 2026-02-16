@@ -73,7 +73,7 @@ export function useSales() {
         method: 'GET',
       });
 
-      console.log('✅ Sales fetched:', response.data);
+      console.log('Sales fetched:', response.data);
 
       setSales(response.data || []);
       setPagination(response.pagination || {
@@ -87,7 +87,7 @@ export function useSales() {
     } catch (err: any) {
       const errorMessage = err.message || 'Error al obtener ventas';
       setError(errorMessage);
-      console.error('❌ Error fetching sales:', err);
+      console.error('Error fetching sales:', err);
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -107,13 +107,13 @@ export function useSales() {
         body: JSON.stringify(saleData),
       });
 
-      console.log('✅ Sale created:', response);
+      console.log('Sale created:', response);
 
       return response;
     } catch (err: any) {
       const errorMessage = err.message || 'Error al crear venta';
       setError(errorMessage);
-      console.error('❌ Error creating sale:', err);
+      console.error('Error creating sale:', err);
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);

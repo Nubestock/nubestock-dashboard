@@ -119,7 +119,7 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
     setError(null);
 
     try {
-      console.log('👥 Cargando clientes desde API...', {
+      console.log('Cargando clientes desde API...', {
         url: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CLIENTS}?is_active=${isActive}&limit=${limit}&page=${page}`,
         isActive,
         limit,
@@ -133,15 +133,15 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
         }
       );
 
-      console.log('📡 Respuesta clientes:', response);
+      console.log('Respuesta clientes:', response);
 
       if (response && response.success && response.data) {
-        console.log('✅ Clientes cargados:', {
+        console.log('Clientes cargados:', {
           count: response.data.length,
         });
         setClients(response.data);
       } else {
-        console.warn('⚠️ Respuesta inesperada del servidor');
+        console.warn('Respuesta inesperada del servidor');
         setClients([]);
       }
     } catch (err) {
@@ -149,11 +149,11 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
       
       // Manejo especial para errores 403 (sin permisos)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('permisos')) {
-        console.warn('⚠️ Sin permisos para ver clientes');
+        console.warn('Sin permisos para ver clientes');
         setError(null); // No mostrar error en UI
         setClients([]);
       } else {
-        console.error('❌ Error cargando clientes:', errorMessage);
+        console.error('Error cargando clientes:', errorMessage);
         setError(errorMessage);
         setClients([]);
       }
@@ -173,14 +173,14 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
   // Crear cliente
   const createClient = useCallback(async (clientData: ClientCreateData) => {
     try {
-      console.log('🆕 Creando cliente:', clientData);
+      console.log('Creando cliente:', clientData);
       
       const response = await apiRequest(API_CONFIG.ENDPOINTS.CLIENTS, {
         method: 'POST',
         body: JSON.stringify(clientData),
       });
 
-      console.log('✅ Cliente creado:', response);
+      console.log('Cliente creado:', response);
       
       if (response && response.success) {
         await fetchClients();
@@ -190,7 +190,7 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear cliente';
-      console.error('❌ Error creando cliente:', errorMessage);
+      console.error('Error creando cliente:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchClients]);
@@ -198,14 +198,14 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
   // Actualizar cliente
   const updateClient = useCallback(async (clientId: number, clientData: ClientUpdateData) => {
     try {
-      console.log('📝 Actualizando cliente:', clientId, clientData);
+      console.log('Actualizando cliente:', clientId, clientData);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.CLIENTS}/${clientId}`, {
         method: 'PUT',
         body: JSON.stringify(clientData),
       });
 
-      console.log('✅ Cliente actualizado:', response);
+      console.log('Cliente actualizado:', response);
       
       if (response && response.success) {
         await fetchClients();
@@ -215,7 +215,7 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar cliente';
-      console.error('❌ Error actualizando cliente:', errorMessage);
+      console.error('Error actualizando cliente:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchClients]);
@@ -223,13 +223,13 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
   // Eliminar cliente (soft delete)
   const deleteClient = useCallback(async (clientId: number) => {
     try {
-      console.log('🗑️ Eliminando cliente:', clientId);
+      console.log('Eliminando cliente:', clientId);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.CLIENTS}/${clientId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Cliente eliminado:', response);
+      console.log('Cliente eliminado:', response);
       
       if (response && response.success) {
         await fetchClients();
@@ -239,7 +239,7 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar cliente';
-      console.error('❌ Error eliminando cliente:', errorMessage);
+      console.error('Error eliminando cliente:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchClients]);
@@ -247,14 +247,14 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
   // Crear clientes en lote
   const bulkCreateClients = useCallback(async (clients: BulkClientItem[]) => {
     try {
-      console.log('📦 Creando clientes en lote:', clients.length);
+      console.log('Creando clientes en lote:', clients.length);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.CLIENTS}/bulk`, {
         method: 'POST',
         body: JSON.stringify(clients),
       });
 
-      console.log('✅ Respuesta bulk:', response);
+      console.log('Respuesta bulk:', response);
       
       if (response && response.data) {
         await fetchClients();
@@ -264,7 +264,7 @@ export function useClients(isActive: boolean = true, limit: number = 1000, page:
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear clientes en lote';
-      console.error('❌ Error bulk create:', errorMessage);
+      console.error('Error bulk create:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchClients]);
@@ -294,13 +294,13 @@ export function useProvinces() {
       setError(null);
 
       try {
-        console.log('🌍 Cargando provincias desde API...');
+        console.log('Cargando provincias desde API...');
         
         const response = await apiRequest('/locations/provinces', {
           method: 'GET',
         });
 
-        console.log('✅ Provincias cargadas:', response);
+        console.log('Provincias cargadas:', response);
 
         if (response && response.success && response.data) {
           setProvinces(response.data);
@@ -309,7 +309,7 @@ export function useProvinces() {
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al cargar provincias';
-        console.error('❌ Error cargando provincias:', errorMessage);
+        console.error('Error cargando provincias:', errorMessage);
         setError(errorMessage);
         setProvinces([]);
       } finally {
@@ -335,7 +335,7 @@ export function useCities(provinceId?: number) {
       setError(null);
 
       try {
-        console.log('🏙️ Cargando ciudades desde API...', { provinceId });
+        console.log('Cargando ciudades desde API...', { provinceId });
         
         const endpoint = provinceId 
           ? `/locations/cities?id_province=${provinceId}`
@@ -345,7 +345,7 @@ export function useCities(provinceId?: number) {
           method: 'GET',
         });
 
-        console.log('✅ Ciudades cargadas:', response);
+        console.log('Ciudades cargadas:', response);
 
         if (response && response.success && response.data) {
           setCities(response.data);
@@ -354,7 +354,7 @@ export function useCities(provinceId?: number) {
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al cargar ciudades';
-        console.error('❌ Error cargando ciudades:', errorMessage);
+        console.error('Error cargando ciudades:', errorMessage);
         setError(errorMessage);
         setCities([]);
       } finally {

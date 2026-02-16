@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import * as XLSX from 'xlsx';
+import { createWorkbook, addSheetFromJson, addSheetFromAoa, downloadWorkbook, readWorkbookToJson } from '../utils/excel';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import {
@@ -83,9 +83,8 @@ export default function BulkProductUpload({
     { number: 4, label: 'Resultado' },
   ];
 
-  const downloadTemplate = () => {
+  const downloadTemplate = async () => {
     const examplePrefix = productType === 'PF' ? 'SN-' : 'MP-';
-    
     const template = [
       {
         'Nombre *': productType === 'PF' ? 'Ejemplo: Snack Maní Salado 500g' : 'Ejemplo: Maní sin sal',
@@ -111,8 +110,6 @@ export default function BulkProductUpload({
       },
     ];
 
-    const ws = XLSX.utils.json_to_sheet(template);
-
     const helpData = [
       ['CATÁLOGO DE CATEGORÍAS'],
       ['ID', 'Nombre'],
@@ -127,15 +124,13 @@ export default function BulkProductUpload({
       ...measures.map((m) => [m.id, m.name, m.abbreviation]),
     ];
 
-    const wsHelp = XLSX.utils.aoa_to_sheet(helpData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Productos');
-    XLSX.utils.book_append_sheet(wb, wsHelp, 'Catálogos');
-
-    const fileName = productType === 'PF' 
-      ? 'plantilla_productos_finales.xlsx' 
+    const wb = createWorkbook();
+    addSheetFromJson(wb, 'Productos', template as Record<string, unknown>[]);
+    addSheetFromAoa(wb, 'Catálogos', helpData);
+    const fileName = productType === 'PF'
+      ? 'plantilla_productos_finales.xlsx'
       : 'plantilla_materias_primas.xlsx';
-    XLSX.writeFile(wb, fileName);
+    await downloadWorkbook(wb, fileName);
     toast.success('Plantilla descargada');
   };
 
@@ -147,9 +142,7 @@ export default function BulkProductUpload({
       setFileName(file.name);
       
       const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet) as ParsedExcelRow[];
+      const jsonData = (await readWorkbookToJson(data)) as ParsedExcelRow[];
 
       if (jsonData.length === 0) {
         toast.error('El archivo está vacío');

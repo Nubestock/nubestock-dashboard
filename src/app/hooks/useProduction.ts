@@ -147,7 +147,7 @@ export function useProduction() {
         method: 'GET',
       });
 
-      console.log('✅ Productions fetched:', response);
+      console.log('Productions fetched:', response);
 
       setProductions(response.data.productions || []);
       setPagination(response.data.pagination || {
@@ -170,11 +170,11 @@ export function useProduction() {
     } catch (err: any) {
       const errorMessage = err.message || 'Error al cargar producciones';
       setError(errorMessage);
-      console.error('❌ Error fetching productions:', err);
+      console.error('Error fetching productions:', err);
       
       // Si es un error de red, retornar datos vacíos en lugar de fallar
       if (err.message === 'Failed to fetch' || err.message.includes('Network')) {
-        console.warn('⚠️ Network error - returning empty data');
+        console.warn('Network error - returning empty data');
         const emptyResponse: ProductionResponse = {
           success: true,
           message: 'No se pudo cargar las producciones',
@@ -223,13 +223,13 @@ export function useProduction() {
         body: JSON.stringify({ quantity }),
       });
 
-      console.log('✅ Production completed:', response);
+      console.log('Production completed:', response);
 
       return response;
     } catch (err: any) {
       const errorMessage = err.message || 'Error al completar producción';
       setError(errorMessage);
-      console.error('❌ Error completing production:', err);
+      console.error('Error completing production:', err);
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -256,7 +256,7 @@ export function useProduction() {
         method: 'GET',
       });
 
-      console.log('📊 Global summary fetched:', response.data.summary);
+      console.log('Global summary fetched:', response.data.summary);
 
       setGlobalSummary({
         total: response.data.summary.total,
@@ -266,7 +266,7 @@ export function useProduction() {
 
       return response.data.summary;
     } catch (err: any) {
-      console.error('❌ Error fetching global summary:', err);
+      console.error('Error fetching global summary:', err);
       // No lanzar error, solo log
     }
   };

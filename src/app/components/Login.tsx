@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React ,{ useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -44,7 +44,7 @@ export default function Login() {
       await login(email, password);
       toast.success('Bienvenido a Nutregam');
     } catch (error) {
-        console.error('❌ Error en login:', error);
+        console.error('Error en login:', error);
         
         let errorMessage = 'Error al iniciar sesión';
         if (error instanceof Error) {

@@ -12,6 +12,7 @@ export interface Product {
   type: 'MP' | 'PF'; // MP = Materia Prima, PF = Producto Final
   min_stock: number;
   quantity: number;
+  price?: number;
   is_active: boolean;
   creation_date: string;
   modification_date?: string;
@@ -144,16 +145,16 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
         endpoint += `&search=${encodeURIComponent(search.trim())}`;
       }
 
-      console.log('📦 Cargando productos...', { endpoint, page, limit, type, search });
+      console.log('Cargando productos...', { endpoint, page, limit, type, search });
 
       const response = await apiRequest(endpoint, {
         method: 'GET',
       });
 
-      console.log('📡 Respuesta productos:', response);
+      console.log('Respuesta productos:', response);
 
       if (response && response.success && response.data) {
-        console.log('✅ Productos cargados:', {
+        console.log('Productos cargados:', {
           count: response.data.length,
           total: response.pagination?.total || response.data.length,
         });
@@ -170,7 +171,7 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
           });
         }
       } else {
-        console.warn('⚠️ Respuesta inesperada del servidor');
+        console.warn('Respuesta inesperada del servidor');
         setProducts([]);
       }
     } catch (err) {
@@ -178,11 +179,11 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
       
       // Manejo especial para errores 403 (sin permisos)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('permisos')) {
-        console.warn('⚠️ Sin permisos para ver productos');
+        console.warn('Sin permisos para ver productos');
         setError(null);
         setProducts([]);
       } else {
-        console.error('❌ Error cargando productos:', errorMessage);
+        console.error('Error cargando productos:', errorMessage);
         setError(errorMessage);
         setProducts([]);
       }
@@ -202,14 +203,14 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
   // Crear producto
   const createProduct = useCallback(async (productData: ProductCreateData) => {
     try {
-      console.log('🆕 Creando producto:', productData);
+      console.log('Creando producto:', productData);
       
       const response = await apiRequest(API_CONFIG.ENDPOINTS.PRODUCTS, {
         method: 'POST',
         body: JSON.stringify(productData),
       });
 
-      console.log('✅ Producto creado:', response);
+      console.log('Producto creado:', response);
       
       if (response && response.success) {
         await fetchProducts();
@@ -219,7 +220,7 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear producto';
-      console.error('❌ Error creando producto:', errorMessage);
+      console.error('Error creando producto:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchProducts]);
@@ -227,14 +228,14 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
   // Actualizar producto
   const updateProduct = useCallback(async (productId: number, productData: ProductUpdateData) => {
     try {
-      console.log('📝 Actualizando producto:', productId, productData);
+      console.log('Actualizando producto:', productId, productData);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${productId}`, {
         method: 'PUT',
         body: JSON.stringify(productData),
       });
 
-      console.log('✅ Producto actualizado:', response);
+      console.log('Producto actualizado:', response);
       
       if (response && response.success) {
         await fetchProducts();
@@ -244,7 +245,7 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar producto';
-      console.error('❌ Error actualizando producto:', errorMessage);
+      console.error('Error actualizando producto:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchProducts]);
@@ -252,13 +253,13 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
   // Eliminar producto (soft delete)
   const deleteProduct = useCallback(async (productId: number) => {
     try {
-      console.log('🗑️ Eliminando producto:', productId);
+      console.log('Eliminando producto:', productId);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${productId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Producto eliminado:', response);
+      console.log('Producto eliminado:', response);
       
       if (response && response.success) {
         await fetchProducts();
@@ -268,7 +269,7 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar producto';
-      console.error('❌ Error eliminando producto:', errorMessage);
+      console.error('Error eliminando producto:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchProducts]);
@@ -276,14 +277,14 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
   // Crear productos en lote
   const bulkCreateProducts = useCallback(async (products: BulkProductItem[]) => {
     try {
-      console.log('📦 Creando productos en lote:', products.length);
+      console.log('Creando productos en lote:', products.length);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.PRODUCTS}/bulk`, {
         method: 'POST',
         body: JSON.stringify(products),
       });
 
-      console.log('✅ Respuesta bulk:', response);
+      console.log('Respuesta bulk:', response);
       
       if (response && response.data) {
         await fetchProducts();
@@ -293,7 +294,7 @@ export function useProducts(page: number = 1, limit: number = 10, type?: 'MP' | 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear productos en lote';
-      console.error('❌ Error bulk create:', errorMessage);
+      console.error('Error bulk create:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchProducts]);
@@ -322,13 +323,13 @@ export function useCategories() {
     setError(null);
 
     try {
-      console.log('📂 Cargando categorías desde API...');
+      console.log('Cargando categorías desde API...');
       
       const response = await apiRequest('/products/categories', {
         method: 'GET',
       });
 
-      console.log('✅ Categorías cargadas:', response);
+      console.log('Categorías cargadas:', response);
 
       if (response && response.success && response.data) {
         setCategories(response.data);
@@ -337,7 +338,7 @@ export function useCategories() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar categorías';
-      console.error('❌ Error cargando categorías:', errorMessage);
+      console.error('Error cargando categorías:', errorMessage);
       setError(errorMessage);
       setCategories([]);
     } finally {
@@ -352,14 +353,14 @@ export function useCategories() {
   // Crear categoría
   const createCategory = useCallback(async (categoryData: CategoryCreateData) => {
     try {
-      console.log('🆕 Creando categoría:', categoryData);
+      console.log('Creando categoría:', categoryData);
       
       const response = await apiRequest('/products/categories', {
         method: 'POST',
         body: JSON.stringify(categoryData),
       });
 
-      console.log('✅ Categoría creada:', response);
+      console.log('Categoría creada:', response);
       
       if (response && response.success) {
         await fetchCategories();
@@ -369,7 +370,7 @@ export function useCategories() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear categoría';
-      console.error('❌ Error creando categoría:', errorMessage);
+      console.error('Error creando categoría:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchCategories]);
@@ -377,14 +378,14 @@ export function useCategories() {
   // Actualizar categoría
   const updateCategory = useCallback(async (categoryId: number, categoryData: CategoryUpdateData) => {
     try {
-      console.log('📝 Actualizando categoría:', categoryId, categoryData);
+      console.log('Actualizando categoría:', categoryId, categoryData);
       
       const response = await apiRequest(`/products/categories?id=${categoryId}`, {
         method: 'PUT',
         body: JSON.stringify(categoryData),
       });
 
-      console.log('✅ Categoría actualizada:', response);
+      console.log('Categoría actualizada:', response);
       
       if (response && response.success) {
         await fetchCategories();
@@ -394,7 +395,7 @@ export function useCategories() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar categoría';
-      console.error('❌ Error actualizando categoría:', errorMessage);
+      console.error('Error actualizando categoría:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchCategories]);
@@ -402,13 +403,13 @@ export function useCategories() {
   // Eliminar categoría (soft delete)
   const deleteCategory = useCallback(async (categoryId: number) => {
     try {
-      console.log('🗑️ Eliminando categoría:', categoryId);
+      console.log('Eliminando categoría:', categoryId);
       
       const response = await apiRequest(`/products/categories?id=${categoryId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Categoría eliminada:', response);
+      console.log('Categoría eliminada:', response);
       
       if (response && response.success) {
         await fetchCategories();
@@ -418,7 +419,7 @@ export function useCategories() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar categoría';
-      console.error('❌ Error eliminando categoría:', errorMessage);
+      console.error('Error eliminando categoría:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchCategories]);
@@ -446,13 +447,13 @@ export function useOrigins() {
       setError(null);
 
       try {
-        console.log('🏭 Cargando orígenes desde API...');
+        console.log('Cargando orígenes desde API...');
         
         const response = await apiRequest('/products/origins', {
           method: 'GET',
         });
 
-        console.log('✅ Orígenes cargados:', response);
+        console.log('Orígenes cargados:', response);
 
         if (response && response.success && response.data) {
           setOrigins(response.data);
@@ -461,7 +462,7 @@ export function useOrigins() {
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al cargar orígenes';
-        console.error('❌ Error cargando orígenes:', errorMessage);
+        console.error('Error cargando orígenes:', errorMessage);
         setError(errorMessage);
         setOrigins([]);
       } finally {
@@ -487,13 +488,13 @@ export function useMeasures() {
       setError(null);
 
       try {
-        console.log('📏 Cargando unidades de medida desde API...');
+        console.log('Cargando unidades de medida desde API...');
         
         const response = await apiRequest('/products/measures', {
           method: 'GET',
         });
 
-        console.log('✅ Unidades de medida cargadas:', response);
+        console.log('Unidades de medida cargadas:', response);
 
         if (response && response.success && response.data) {
           setMeasures(response.data);
@@ -502,7 +503,7 @@ export function useMeasures() {
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al cargar unidades de medida';
-        console.error('❌ Error cargando unidades de medida:', errorMessage);
+        console.error('Error cargando unidades de medida:', errorMessage);
         setError(errorMessage);
         setMeasures([]);
       } finally {

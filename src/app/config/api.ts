@@ -40,9 +40,9 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
   const separator = endpoint.includes('?') ? '&' : '?';
   const codeParam = API_CONFIG.API_CODE ? `${separator}code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '';
   const fullUrl = `${base}${endpoint}${codeParam}`;
-  console.log(`🌐 API Request: ${options.method || 'GET'} ${fullUrl}`);
+  console.log(`API Request: ${options.method || 'GET'} ${fullUrl}`);
   if (options.body) {
-    console.log(`📦 Request Body:`, options.body);
+    console.log(`Request Body:`, options.body);
   }
 
   try {
@@ -51,7 +51,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
       headers,
     });
 
-    console.log(`📡 Response Status: ${response.status} ${response.statusText}`);
+    console.log(`Response Status: ${response.status} ${response.statusText}`);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -63,18 +63,18 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
       
       // Para 404 en endpoints opcionales, solo un warning silencioso
       if (response.status === 404 && isOptionalEndpoint) {
-        console.warn(`⚠️ Endpoint ${endpoint} no disponible aún (404)`);
+        console.warn(`Endpoint ${endpoint} no disponible aún (404)`);
         throw new Error(`Error: 404`);
       }
       
       // Para 403 (sin permisos), warning silencioso
       if (response.status === 403) {
-        console.warn(`⚠️ Sin permisos para acceder a ${endpoint}`);
+        console.warn(`Sin permisos para acceder a ${endpoint}`);
         throw new Error(errorMessage);
       }
       
       // Para otros errores, mostrar log completo
-      console.error(`❌ Error Response:`, {
+      console.error(`Error Response:`, {
         status: response.status,
         statusText: response.statusText,
         errorData,

@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useClients, useProvinces, useCities } from '../hooks/useClients';
 import BulkClientUpload from './BulkClientUpload';
 import ClientForm from './ClientForm';
-import * as XLSX from 'xlsx';
+import { createWorkbook, addSheetFromJson, downloadWorkbook } from '../utils/excel';
 import {
   Sheet,
   SheetContent,
@@ -66,7 +66,7 @@ export default function ClientManagement() {
   };
 
   // Exportar a Excel
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     try {
       const dataToExport = filteredClients.map(client => ({
         'Identificación': client.identification,
@@ -84,12 +84,10 @@ export default function ClientManagement() {
         'Fecha de Creación': new Date(client.creation_date).toLocaleDateString('es-EC'),
       }));
 
-      const ws = XLSX.utils.json_to_sheet(dataToExport);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+      const wb = createWorkbook();
+      addSheetFromJson(wb, 'Clientes', dataToExport);
       const fileName = `Clientes_Nutregam_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(wb, fileName);
-      
+      await downloadWorkbook(wb, fileName);
       toast.success(`${filteredClients.length} clientes exportados exitosamente`);
     } catch (error) {
       console.error('Error al exportar:', error);

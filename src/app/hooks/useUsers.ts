@@ -70,13 +70,13 @@ export function useUsers(page: number = 1, limit: number = 10, search: string = 
 
       const url = `/users?${params.toString()}`;
 
-      console.log('🔄 Cargando usuarios desde:', url);
+      console.log('Cargando usuarios desde:', url);
 
       const response = await apiRequest(url, {
         method: 'GET',
       });
 
-      console.log('✅ Usuarios cargados:', response.data?.length || 0);
+      console.log('Usuarios cargados:', response.data?.length || 0);
 
       setUsers(response.data || []);
       setPagination(response.pagination || {
@@ -90,11 +90,11 @@ export function useUsers(page: number = 1, limit: number = 10, search: string = 
       
       // Manejo especial para errores 403 (sin permisos)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('permisos')) {
-        console.warn('⚠️ Sin permisos para ver usuarios');
+        console.warn('Sin permisos para ver usuarios');
         setError(null);
         setUsers([]);
       } else {
-        console.error('❌ Error al cargar usuarios:', err);
+        console.error('Error al cargar usuarios:', err);
         setError(errorMessage);
         setUsers([]);
       }
@@ -105,7 +105,7 @@ export function useUsers(page: number = 1, limit: number = 10, search: string = 
 
   const createUser = async (userData: UserCreate) => {
     try {
-      console.log('📤 Creando usuario (registro):', userData);
+      console.log('Creando usuario (registro):', userData);
 
       const payload = {
         name: userData.name,
@@ -120,20 +120,20 @@ export function useUsers(page: number = 1, limit: number = 10, search: string = 
         body: JSON.stringify(payload),
       });
 
-      console.log('✅ Usuario registrado exitosamente:', response.data);
+      console.log('Usuario registrado exitosamente:', response.data);
 
       await fetchUsers();
 
       return response;
     } catch (err) {
-      console.error('❌ Error al registrar usuario:', err);
+      console.error('Error al registrar usuario:', err);
       throw err;
     }
   };
 
   const updateUser = async (userId: number, updateData: UserUpdate) => {
     try {
-      console.log(`📤 Actualizando usuario ${userId}:`, updateData);
+      console.log(`Actualizando usuario ${userId}:`, updateData);
 
       const payload = {
         name: updateData.name,
@@ -147,48 +147,48 @@ export function useUsers(page: number = 1, limit: number = 10, search: string = 
         body: JSON.stringify(payload),
       });
 
-      console.log('✅ Usuario actualizado:', response.data);
+      console.log('Usuario actualizado:', response.data);
 
       await fetchUsers();
 
       return response;
     } catch (err) {
-      console.error('❌ Error al actualizar usuario:', err);
+      console.error('Error al actualizar usuario:', err);
       throw err;
     }
   };
 
   const deleteUser = async (userId: number) => {
     try {
-      console.log(`📤 Eliminando usuario ${userId}`);
+      console.log(`Eliminando usuario ${userId}`);
 
       await apiRequest(`/users/${userId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Usuario eliminado');
+      console.log('Usuario eliminado');
 
       await fetchUsers();
     } catch (err) {
-      console.error('❌ Error al eliminar usuario:', err);
+      console.error('Error al eliminar usuario:', err);
       throw err;
     }
   };
 
   const adminResetPassword = async (email: string) => {
     try {
-      console.log(`🔑 Administrador generando solicitud de restablecimiento para: ${email}`);
+      console.log(`Administrador generando solicitud de restablecimiento para: ${email}`);
 
       const response = await apiRequest('/auth/admin-reset-password', {
         method: 'POST',
         body: JSON.stringify({ email }),
       });
 
-      console.log('✅ Respuesta del servidor:', response);
+      console.log('Respuesta del servidor:', response);
 
       return response;
     } catch (err) {
-      console.error('❌ Error al generar solicitud de restablecimiento:', err);
+      console.error('Error al generar solicitud de restablecimiento:', err);
       throw err;
     }
   };
@@ -222,18 +222,18 @@ export function useRoles() {
     setError(null);
 
     try {
-      console.log('🔄 Cargando roles...');
+      console.log('Cargando roles...');
 
       const response = await apiRequest('/roles', {
         method: 'GET',
       });
 
-      console.log('✅ Roles cargados:', response.data?.length || 0);
+      console.log('Roles cargados:', response.data?.length || 0);
 
       setRoles(response.data || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      console.error('❌ Error al cargar roles:', err);
+      console.error('Error al cargar roles:', err);
       setError(errorMessage);
       setRoles([]);
     } finally {
@@ -265,13 +265,13 @@ export function useRolesWithPermissions() {
     setError(null);
 
     try {
-      console.log('🔄 Cargando roles con permisos...');
+      console.log('Cargando roles con permisos...');
 
       const response = await apiRequest('/roles/all', {
         method: 'GET',
       });
 
-      console.log('✅ Roles con permisos cargados:', {
+      console.log('Roles con permisos cargados:', {
         roles: response.data?.roles?.length || 0,
         permissions: response.data?.allPermissions?.length || 0,
       });
@@ -279,7 +279,7 @@ export function useRolesWithPermissions() {
       setRolesData(response.data || null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      console.error('❌ Error al cargar roles con permisos:', err);
+      console.error('Error al cargar roles con permisos:', err);
       setError(errorMessage);
       setRolesData(null);
     } finally {
@@ -290,21 +290,21 @@ export function useRolesWithPermissions() {
   const updateRole = useCallback(
     async (roleId: number, data: { name: string; description: string; permissions: number[] }) => {
       try {
-        console.log('🔄 Actualizando rol:', { roleId, data });
+        console.log('Actualizando rol:', { roleId, data });
 
         const response = await apiRequest(`/roles/${roleId}`, {
           method: 'PUT',
           body: JSON.stringify(data),
         });
 
-        console.log('✅ Rol actualizado exitosamente');
+        console.log('Rol actualizado exitosamente');
 
         await fetchRolesWithPermissions();
 
         return response;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al actualizar rol';
-        console.error('❌ Error al actualizar rol:', err);
+        console.error('Error al actualizar rol:', err);
         throw new Error(errorMessage);
       }
     },
@@ -314,21 +314,21 @@ export function useRolesWithPermissions() {
   const createRole = useCallback(
     async (data: { name: string; description: string; permissions: number[] }) => {
       try {
-        console.log('🔄 Creando rol:', data);
+        console.log('Creando rol:', data);
 
         const response = await apiRequest('/roles', {
           method: 'POST',
           body: JSON.stringify(data),
         });
 
-        console.log('✅ Rol creado exitosamente');
+        console.log('Rol creado exitosamente');
 
         await fetchRolesWithPermissions();
 
         return response;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al crear rol';
-        console.error('❌ Error al crear rol:', err);
+        console.error('Error al crear rol:', err);
         throw new Error(errorMessage);
       }
     },
@@ -338,20 +338,20 @@ export function useRolesWithPermissions() {
   const deleteRole = useCallback(
     async (roleId: number) => {
       try {
-        console.log('🔄 Eliminando rol:', roleId);
+        console.log('Eliminando rol:', roleId);
 
         const response = await apiRequest(`/roles/${roleId}`, {
           method: 'DELETE',
         });
 
-        console.log('✅ Rol eliminado exitosamente');
+        console.log('Rol eliminado exitosamente');
 
         await fetchRolesWithPermissions();
 
         return response;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al eliminar rol';
-        console.error('❌ Error al eliminar rol:', err);
+        console.error('Error al eliminar rol:', err);
         throw new Error(errorMessage);
       }
     },
@@ -385,18 +385,18 @@ export function usePermissions() {
     setError(null);
 
     try {
-      console.log('🔄 Cargando permisos...');
+      console.log('Cargando permisos...');
 
       const response = await apiRequest('/roles/permissions', {
         method: 'GET',
       });
 
-      console.log('✅ Permisos cargados:', response.data?.length || 0);
+      console.log('Permisos cargados:', response.data?.length || 0);
 
       setPermissions(response.data || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      console.error('❌ Error al cargar permisos:', err);
+      console.error('Error al cargar permisos:', err);
       setError(errorMessage);
       setPermissions([]);
     } finally {
@@ -433,18 +433,18 @@ export function useUserPermissions(userId?: number) {
     setError(null);
 
     try {
-      console.log(`🔄 Cargando permisos del usuario ${userId}...`);
+      console.log(`Cargando permisos del usuario ${userId}...`);
 
       const response = await apiRequest(`/user-permissions/${userId}`, {
         method: 'GET',
       });
 
-      console.log('✅ Permisos de usuario cargados');
+      console.log('Permisos de usuario cargados');
 
       setUserPermissions(response.data || null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      console.error('❌ Error al cargar permisos de usuario:', err);
+      console.error('Error al cargar permisos de usuario:', err);
       setError(errorMessage);
       setUserPermissions(null);
     } finally {
@@ -454,38 +454,38 @@ export function useUserPermissions(userId?: number) {
 
   const assignRole = async (data: AssignRoleData) => {
     try {
-      console.log('📤 Asignando rol:', data);
+      console.log('Asignando rol:', data);
 
       const response = await apiRequest('/user-permissions', {
         method: 'POST',
         body: JSON.stringify(data),
       });
 
-      console.log('✅ Rol asignado exitosamente');
+      console.log('Rol asignado exitosamente');
 
       await fetchUserPermissions();
 
       return response;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al asignar rol';
-      console.error('❌ Error al asignar rol:', err);
+      console.error('Error al asignar rol:', err);
       throw new Error(errorMessage);
     }
   };
 
   const removeRole = async (userId: number, roleId: number) => {
     try {
-      console.log(`📤 Removiendo rol ${roleId} del usuario ${userId}`);
+      console.log(`Removiendo rol ${roleId} del usuario ${userId}`);
 
       await apiRequest(`/user-permissions/${userId}/role/${roleId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Rol removido');
+      console.log('Rol removido');
 
       await fetchUserPermissions();
     } catch (err) {
-      console.error('❌ Error al remover rol:', err);
+      console.error('Error al remover rol:', err);
       throw err;
     }
   };

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/// <reference types="vite/client" />
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -40,10 +41,10 @@ export default function ConfigurationView() {
 
   const [tempUrl, setTempUrl] = useState(backendUrl);
   const [isChecking, setIsChecking] = useState(false);
-  
-  // Detectar si estamos en producción
+
+  // Detectar si estamos en producción (Vite: import.meta.env)
   const isProduction = import.meta.env.PROD;
-  const isDevelopment = !isProduction;
+  const isDevelopment = import.meta.env.DEV;
 
   const handleSaveUrl = () => {
     if (!tempUrl.trim()) {

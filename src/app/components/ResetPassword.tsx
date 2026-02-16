@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -25,7 +25,7 @@ export default function ResetPassword() {
     
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
-      console.log('🔑 Token extraído de la URL:', tokenFromUrl.substring(0, 20) + '...');
+      console.log('Token extraído de la URL:', tokenFromUrl.substring(0, 20) + '...');
     } else {
       setError('Token no encontrado en la URL. Por favor, utilice el enlace del correo electrónico.');
     }
@@ -63,7 +63,7 @@ export default function ResetPassword() {
     setError(null);
 
     try {
-      console.log('🔄 Enviando solicitud de restablecimiento...');
+      console.log('Enviando solicitud de restablecimiento...');
       
       const response = await apiRequest('/auth/reset-password', {
         method: 'PUT',
@@ -73,7 +73,7 @@ export default function ResetPassword() {
         }),
       });
 
-      console.log('✅ Respuesta del servidor:', response);
+      console.log('Respuesta del servidor:', response);
 
       if (response.success) {
         setSuccess(true);
@@ -87,7 +87,7 @@ export default function ResetPassword() {
         throw new Error(response.message || 'Error al restablecer contraseña');
       }
     } catch (err) {
-      console.error('❌ Error al restablecer contraseña:', err);
+      console.error('Error al restablecer contraseña:', err);
       const errorMessage = err instanceof Error ? err.message : 'Error al restablecer contraseña';
       setError(errorMessage);
       toast.error(errorMessage);

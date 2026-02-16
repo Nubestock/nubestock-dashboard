@@ -380,7 +380,7 @@ export const exampleBackendValidation = async () => {
 /**
  * SEGURIDAD IMPORTANTE:
  * 
- * ⚠️ Los permisos en el frontend son SOLO para UX (mostrar/ocultar botones)
- * ⚠️ SIEMPRE valida los permisos en el backend antes de ejecutar acciones
- * ⚠️ Nunca confíes solo en la verificación del frontend
+ * Los permisos en el frontend son SOLO para UX (mostrar/ocultar botones)
+ * SIEMPRE valida los permisos en el backend antes de ejecutar acciones
+ * Nunca confíes solo en la verificación del frontend
  */

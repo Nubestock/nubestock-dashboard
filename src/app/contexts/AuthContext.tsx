@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { API_CONFIG } from '../config/api';
 import { Permission } from '../utils/permissionUtils';
 import { User as ApiUser } from '../types/api';
@@ -36,13 +36,13 @@ function decodeJWT(token: string): any {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) {
-      console.warn('⚠️ Token no tiene el formato JWT esperado');
+      console.warn('Token no tiene el formato JWT esperado');
       return null;
     }
 
     const base64Url = parts[1];
     if (!base64Url) {
-      console.warn('⚠️ Token no tiene payload');
+      console.warn('Token no tiene payload');
       return null;
     }
 
@@ -66,7 +66,7 @@ export function useAuth() {
   if (context === undefined) {
     // Durante el hot reload, el contexto puede perderse temporalmente
     if (import.meta.hot) {
-      console.warn('⚠️ AuthContext no disponible durante HMR, usando valores por defecto');
+      console.warn('AuthContext no disponible durante HMR, usando valores por defecto');
       return {
         user: null,
         token: null,
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const storedToken = localStorage.getItem('token');
     const storedRefreshToken = localStorage.getItem('refreshToken');
 
-    console.log('🔍 Verificando localStorage:', {
+    console.log('Verificando localStorage:', {
       hasUser: !!storedUser,
       hasToken: !!storedToken,
       hasRefreshToken: !!storedRefreshToken,
@@ -128,11 +128,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (decodedToken) {
           setPermissions(decodedToken.permissions || []);
           setRoles(decodedToken.roles || []);
-          console.log('🔑 Permisos del usuario:', decodedToken.permissions);
-          console.log('🎭 Roles del usuario:', decodedToken.roles);
+          console.log('Permisos del usuario:', decodedToken.permissions);
+          console.log('Roles del usuario:', decodedToken.roles);
         }
         
-        console.log('✅ Sesión restaurada desde localStorage');
+        console.log('Sesión restaurada desde localStorage');
       } catch (error) {
         console.error('Error al cargar datos del localStorage:', error);
         // Limpiar localStorage si hay datos corruptos
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.removeItem('refreshToken');
       }
     } else {
-      console.log('⚠️ No hay sesión guardada - mostrando Login');
+      console.log('No hay sesión guardada - mostrando Login');
     }
     setIsLoading(false);
   }, []);
@@ -151,7 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const loginUrl =
         `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}` +
         (API_CONFIG.API_CODE ? `?code=${encodeURIComponent(API_CONFIG.API_CODE)}` : '');
-      console.log('🔐 Intentando login...', { email, url: loginUrl });
+      console.log('Intentando login...', { email, url: loginUrl });
 
       const response = await fetch(loginUrl, {
         method: 'POST',
@@ -161,7 +161,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log('📡 Respuesta del servidor:', {
+      console.log('Respuesta del servidor:', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok,
@@ -172,15 +172,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         try {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
-          console.error('❌ Error del servidor:', errorData);
+          console.error('Error del servidor:', errorData);
         } catch (e) {
-          console.error('❌ No se pudo parsear error del servidor');
+          console.error('No se pudo parsear error del servidor');
         }
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      console.log('📦 Datos recibidos:', {
+      console.log('Datos recibidos:', {
         success: data.success,
         hasUser: !!data.data?.user,
         hasToken: !!data.data?.token,
@@ -198,8 +198,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setPermissions(userPermissions);
           setRoles(userRoles);
           
-          console.log('🔑 Permisos del usuario:', userPermissions);
-          console.log('🎭 Roles del usuario:', userRoles);
+          console.log('Permisos del usuario:', userPermissions);
+          console.log('Roles del usuario:', userRoles);
           
           // Validar si es administrador
           const isAdmin = userRoles.some((role: string) => 
@@ -207,9 +207,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           );
           
           if (isAdmin) {
-            console.log('✅ Usuario con rol de ADMINISTRADOR - Acceso permitido');
+            console.log('Usuario con rol de ADMINISTRADOR - Acceso permitido');
           } else {
-            console.warn('⚠️ Usuario SIN rol de administrador - Acceso DENEGADO al dashboard');
+            console.warn('Usuario SIN rol de administrador - Acceso DENEGADO al dashboard');
             console.warn('   Roles detectados:', userRoles);
           }
           
@@ -229,12 +229,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         
-        console.log('✅ Login exitoso');
+        console.log('Login exitoso');
       } else {
         throw new Error(data.message || 'Error al iniciar sesión');
       }
     } catch (error) {
-      console.error('❌ Error en login:', error);
+      console.error('Error en login:', error);
       throw error;
     }
   };
@@ -248,7 +248,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    console.log('👋 Logout exitoso');
+    console.log('Logout exitoso');
   };
 
   const value = {

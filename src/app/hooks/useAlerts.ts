@@ -85,31 +85,28 @@ export function useAlerts(isActive: boolean = true) {
         ? `${API_CONFIG.ENDPOINTS.ALERTS}?is_active=true`
         : API_CONFIG.ENDPOINTS.ALERTS;
 
-      console.log('🚨 Cargando alertas desde API...', {
+      console.log('Cargando alertas desde API...', {
         endpoint,
         isActive,
       });
 
-      const response = await apiRequest<AlertsResponse>(
-        endpoint,
-        {
-          method: 'GET',
-        }
-      );
+      const response = (await apiRequest(endpoint, {
+        method: 'GET',
+      })) as AlertsResponse;
 
-      console.log('📡 Respuesta alertas:', response);
+      console.log('Respuesta alertas:', response);
 
       if (response && response.success && response.data) {
-        console.log('✅ Alertas cargadas:', {
+        console.log('Alertas cargadas:', {
           count: response.data.length,
           alerts: response.data,
         });
         // Mapear las alertas del API al formato del frontend
         const mappedAlerts = response.data.map(mapAlertFromAPI);
-        console.log('🔄 Alertas mapeadas:', mappedAlerts);
+        console.log('Alertas mapeadas:', mappedAlerts);
         setAlerts(mappedAlerts);
       } else {
-        console.warn('⚠️ Respuesta inesperada del servidor');
+        console.warn('Respuesta inesperada del servidor');
         setAlerts([]);
       }
     } catch (err) {
@@ -117,7 +114,7 @@ export function useAlerts(isActive: boolean = true) {
       
       // Manejo especial para errores 403 (sin permisos)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('permisos')) {
-        console.warn('⚠️ Sin permisos para ver alertas');
+        console.warn('Sin permisos para ver alertas');
         setError(null);
         setAlerts([]);
       } else {

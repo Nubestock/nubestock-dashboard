@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -192,7 +192,7 @@ export default function ProductionManagement() {
         filters.endDate = utcEndDate;
       }
       
-      console.log('📅 Búsqueda de producciones:', {
+      console.log('Búsqueda de producciones:', {
         local: { startDate: startDate || 'sin filtro', endDate: endDate || 'sin filtro' },
         utc: { 
           startDate: filters.startDate || 'sin filtro', 

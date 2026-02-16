@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Upload, Download, FileSpreadsheet, Check, X, Edit2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+import { createWorkbook, addSheetFromJson, downloadWorkbook, readWorkbookToJson } from '../utils/excel';
 import { BulkClientItem, Province, City } from '../hooks/useClients';
 
 interface BulkClientUploadProps {
@@ -60,8 +60,7 @@ export default function BulkClientUpload({
   const [validationErrors, setValidationErrors] = useState<Record<number, string[]>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const downloadTemplate = () => {
-    // Crear datos de ejemplo para el template
+  const downloadTemplate = async () => {
     const exampleData = [
       {
         'Nombre del Cliente': 'Juan Pérez Distribuciones',
@@ -91,19 +90,10 @@ export default function BulkClientUpload({
       },
     ];
 
-    // Crear hoja de trabajo
-    const ws = XLSX.utils.json_to_sheet(exampleData);
-
-    // Ajustar ancho de columnas
-    const colWidths = TEMPLATE_COLUMNS.map((col) => ({ wch: 25 }));
-    ws['!cols'] = colWidths;
-
-    // Crear libro de trabajo
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
-
-    // Descargar archivo
-    XLSX.writeFile(wb, 'plantilla_clientes_nutregam.xlsx');
+    const colWidths = TEMPLATE_COLUMNS.map(() => 25);
+    const wb = createWorkbook();
+    addSheetFromJson(wb, 'Clientes', exampleData as Record<string, unknown>[], colWidths);
+    await downloadWorkbook(wb, 'plantilla_clientes_nutregam.xlsx');
     toast.success('Plantilla descargada correctamente');
   };
 
@@ -153,18 +143,13 @@ export default function BulkClientUpload({
     return errors;
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    const buffer = await file.arrayBuffer();
+    try {
+        const jsonData = await readWorkbookToJson(buffer);
 
         if (jsonData.length === 0) {
           toast.error('El archivo está vacío');
@@ -190,7 +175,7 @@ export default function BulkClientUpload({
           };
         });
 
-        console.log('📊 Datos parseados del Excel:', parsedData);
+        console.log('Datos parseados del Excel:', parsedData);
 
         // Validar todos los registros
         const errors: Record<number, string[]> = {};
@@ -205,12 +190,10 @@ export default function BulkClientUpload({
         setClientsData(parsedData);
         setStep('preview');
         toast.success(`${parsedData.length} registros cargados`);
-      } catch (error) {
-        console.error('Error al leer el archivo:', error);
-        toast.error('Error al procesar el archivo. Verifica que tenga el formato correcto.');
-      }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error('Error al leer el archivo:', error);
+      toast.error('Error al procesar el archivo. Verifica que tenga el formato correcto.');
+    }
   };
 
   const handleCellEdit = (rowIndex: number, columnKey: string, value: string) => {
@@ -278,11 +261,11 @@ export default function BulkClientUpload({
         return data;
       });
 
-      console.log('📤 Enviando clientes en bulk (limpiados):', cleanedData);
+      console.log('Enviando clientes en bulk (limpiados):', cleanedData);
 
       const response = await onUpload(cleanedData);
 
-      console.log('✅ Respuesta bulk upload:', response);
+      console.log('Respuesta bulk upload:', response);
 
       // Manejar la respuesta según el formato de BulkClientResponse
       if (response) {
@@ -305,7 +288,7 @@ export default function BulkClientUpload({
         throw new Error('Error al crear clientes');
       }
     } catch (error) {
-      console.error('❌ Error en bulk upload:', error);
+      console.error('Error en bulk upload:', error);
       toast.error(error instanceof Error ? error.message : 'Error al crear clientes en masa');
       setStep('preview');
     }

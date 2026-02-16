@@ -125,14 +125,14 @@ export function useDailySalesReport(startDate: string, endDate: string) {
     setError(null);
 
     try {
-      console.log('📊 Cargando reporte de ventas diarias...', { startDate, endDate });
+      console.log('Cargando reporte de ventas diarias...', { startDate, endDate });
 
       const response = await apiRequest(
         `/sales/reports/daily?startDate=${startDate}&endDate=${endDate}`,
         { method: 'GET' }
       );
 
-      console.log('📡 Respuesta reporte diario:', response);
+      console.log('Respuesta reporte diario:', response);
 
       if (response && response.success) {
         setData(response);
@@ -141,7 +141,7 @@ export function useDailySalesReport(startDate: string, endDate: string) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar reporte';
-      console.error('❌ Error al cargar reporte diario:', err);
+      console.error('Error al cargar reporte diario:', err);
       setError(errorMessage);
       setData(null);
     } finally {
@@ -168,14 +168,14 @@ export function useClientSalesReport(startDate: string, endDate: string, limit: 
     setError(null);
 
     try {
-      console.log('📊 Cargando reporte de ventas por cliente...', { startDate, endDate, limit });
+      console.log('Cargando reporte de ventas por cliente...', { startDate, endDate, limit });
 
       const response = await apiRequest(
         `/sales/reports/by-client?startDate=${startDate}&endDate=${endDate}&limit=${limit}`,
         { method: 'GET' }
       );
 
-      console.log('📡 Respuesta reporte por cliente:', response);
+      console.log('Respuesta reporte por cliente:', response);
 
       if (response && response.success) {
         setData(response);
@@ -184,7 +184,7 @@ export function useClientSalesReport(startDate: string, endDate: string, limit: 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar reporte';
-      console.error('❌ Error al cargar reporte por cliente:', err);
+      console.error('Error al cargar reporte por cliente:', err);
       setError(errorMessage);
       setData(null);
     } finally {
@@ -211,14 +211,14 @@ export function useTopProductsReport(startDate: string, endDate: string, limit: 
     setError(null);
 
     try {
-      console.log('📊 Cargando reporte de top productos...', { startDate, endDate, limit });
+      console.log('Cargando reporte de top productos...', { startDate, endDate, limit });
 
       const response = await apiRequest(
         `/sales/reports/top-products?startDate=${startDate}&endDate=${endDate}&limit=${limit}`,
         { method: 'GET' }
       );
 
-      console.log('📡 Respuesta reporte productos:', response);
+      console.log('Respuesta reporte productos:', response);
 
       if (response && response.success) {
         setData(response);
@@ -227,7 +227,7 @@ export function useTopProductsReport(startDate: string, endDate: string, limit: 
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar reporte';
-      console.error('❌ Error al cargar reporte de productos:', err);
+      console.error('Error al cargar reporte de productos:', err);
       setError(errorMessage);
       setData(null);
     } finally {
@@ -254,14 +254,14 @@ export function useDashboardSummary(startDate: string, endDate: string) {
     setError(null);
 
     try {
-      console.log('📊 Cargando dashboard summary...', { startDate, endDate });
+      console.log('Cargando dashboard summary...', { startDate, endDate });
 
       const response = await apiRequest(
         `/sales/reports/summary?startDate=${startDate}&endDate=${endDate}`,
         { method: 'GET' }
       );
 
-      console.log('📡 Respuesta dashboard summary:', response);
+      console.log('Respuesta dashboard summary:', response);
 
       if (response && response.success) {
         setData(response);
@@ -270,7 +270,7 @@ export function useDashboardSummary(startDate: string, endDate: string) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar resumen';
-      console.error('❌ Error al cargar dashboard summary:', err);
+      console.error('Error al cargar dashboard summary:', err);
       setError(errorMessage);
       setData(null);
     } finally {

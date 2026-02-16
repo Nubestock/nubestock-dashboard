@@ -13,10 +13,14 @@ export interface Recipe {
 // Interfaz para el material dentro de una receta (respuesta expandida del API)
 export interface RecipeMaterial {
   id: number;
+  id_product?: number; // ID del producto material (MP)
   name: string;
   code: string;
   type: 'MP' | 'PF';
   measure_name: string;
+  quantity?: number;
+  creation_date?: string;
+  modification_date?: string | null;
 }
 
 // Interfaz para el producto con sus recetas (respuesta del API v2.0 - simplificada)
@@ -72,16 +76,16 @@ export function useRecipes(productId?: number) {
         endpoint += `?id_product=${productId}`;
       }
 
-      console.log('📋 Cargando recetas desde API...', { endpoint, productId });
+      console.log('Cargando recetas desde API...', { endpoint, productId });
 
       const response = await apiRequest(endpoint, {
         method: 'GET',
       });
 
-      console.log('📡 Respuesta recetas:', response);
+      console.log('Respuesta recetas:', response);
 
       if (response && response.success && response.data) {
-        console.log('✅ Recetas cargadas:', {
+        console.log('Recetas cargadas:', {
           count: response.data.length,
         });
         
@@ -92,18 +96,19 @@ export function useRecipes(productId?: number) {
         const flatRecipes: Recipe[] = [];
         response.data.forEach((product: ProductWithRecipes) => {
           product.materials.forEach((material: RecipeMaterial) => {
+            const modDate = material.modification_date;
             flatRecipes.push({
               id: material.id,
               id_product: product.id_product,
-              quantity: material.quantity,
-              creation_date: material.creation_date,
-              modification_date: material.modification_date,
+              quantity: Number(material.quantity) || 0,
+              creation_date: material.creation_date ?? '',
+              modification_date: modDate == null ? undefined : modDate,
             });
           });
         });
         setRecipes(flatRecipes);
       } else {
-        console.warn('⚠️ Respuesta inesperada del servidor');
+        console.warn('Respuesta inesperada del servidor');
         setRecipes([]);
         setProductsWithRecipes([]);
       }
@@ -112,12 +117,12 @@ export function useRecipes(productId?: number) {
       
       // Manejo especial para errores 403 (sin permisos)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('permisos')) {
-        console.warn('⚠️ Sin permisos para ver recetas');
+        console.warn('Sin permisos para ver recetas');
         setError(null);
         setRecipes([]);
         setProductsWithRecipes([]);
       } else {
-        console.error('❌ Error cargando recetas:', errorMessage);
+        console.error('Error cargando recetas:', errorMessage);
         setError(errorMessage);
         setRecipes([]);
         setProductsWithRecipes([]);
@@ -138,14 +143,14 @@ export function useRecipes(productId?: number) {
   // Crear receta (con múltiples materiales)
   const createRecipe = useCallback(async (recipeData: CreateRecipeData) => {
     try {
-      console.log('🆕 Creando receta:', recipeData);
+      console.log('Creando receta:', recipeData);
       
       const response = await apiRequest(API_CONFIG.ENDPOINTS.RECIPE, {
         method: 'POST',
         body: JSON.stringify(recipeData),
       });
 
-      console.log('✅ Receta creada:', response);
+      console.log('Receta creada:', response);
       
       if (response && response.success) {
         await fetchRecipes();
@@ -155,7 +160,7 @@ export function useRecipes(productId?: number) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear receta';
-      console.error('❌ Error creando receta:', errorMessage);
+      console.error('Error creando receta:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchRecipes]);
@@ -163,14 +168,14 @@ export function useRecipes(productId?: number) {
   // Actualizar receta
   const updateRecipe = useCallback(async (recipeId: number, recipeData: UpdateRecipeData) => {
     try {
-      console.log('📝 Actualizando receta:', recipeId, recipeData);
+      console.log('Actualizando receta:', recipeId, recipeData);
       
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.RECIPES}/${recipeId}`, {
         method: 'PUT',
         body: JSON.stringify(recipeData),
       });
 
-      console.log('✅ Receta actualizada:', response);
+      console.log('Receta actualizada:', response);
       
       if (response && response.success) {
         await fetchRecipes();
@@ -180,7 +185,7 @@ export function useRecipes(productId?: number) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar receta';
-      console.error('❌ Error actualizando receta:', errorMessage);
+      console.error('Error actualizando receta:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchRecipes]);
@@ -188,14 +193,14 @@ export function useRecipes(productId?: number) {
   // Eliminar receta
   const deleteRecipe = useCallback(async (recipeId: number) => {
     try {
-      console.log('🗑️ Eliminando receta:', recipeId);
+      console.log('Eliminando receta:', recipeId);
       
       // Según Swagger: DELETE /products/recipe?id_product={id}
       const response = await apiRequest(`${API_CONFIG.ENDPOINTS.RECIPE}?id_product=${recipeId}`, {
         method: 'DELETE',
       });
 
-      console.log('✅ Receta eliminada:', response);
+      console.log('Receta eliminada:', response);
       
       if (response && response.success) {
         await fetchRecipes();
@@ -205,7 +210,7 @@ export function useRecipes(productId?: number) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar receta';
-      console.error('❌ Error eliminando receta:', errorMessage);
+      console.error('Error eliminando receta:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchRecipes]);
@@ -227,8 +232,8 @@ export function useRecipes(productId?: number) {
   // Actualizar receta completa (usando el endpoint PUT /products/recipe)
   const updateCompleteRecipe = useCallback(async (productId: number, materials: Array<{ id_product: number; quantity_required: number }>) => {
     try {
-      console.log('📝 Actualizando receta completa del producto:', productId);
-      console.log('📦 Materiales a actualizar:', materials);
+      console.log('Actualizando receta completa del producto:', productId);
+      console.log('Materiales a actualizar:', materials);
       
       // Usar el endpoint PUT /products/recipe con el body completo
       const response = await apiRequest(API_CONFIG.ENDPOINTS.RECIPE, {
@@ -239,7 +244,7 @@ export function useRecipes(productId?: number) {
         }),
       });
 
-      console.log('✅ Receta completa actualizada:', response);
+      console.log('Receta completa actualizada:', response);
       
       if (response && response.success) {
         await fetchRecipes();
@@ -249,7 +254,7 @@ export function useRecipes(productId?: number) {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar receta completa';
-      console.error('❌ Error actualizando receta completa:', errorMessage);
+      console.error('Error actualizando receta completa:', errorMessage);
       throw new Error(errorMessage);
     }
   }, [fetchRecipes]);

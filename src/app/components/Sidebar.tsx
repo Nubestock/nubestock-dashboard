@@ -307,7 +307,7 @@ export default function Sidebar({
         <div className="flex-shrink-0 p-4 lg:p-6 border-t border-neutral-200 bg-white">
           <div className="mb-3 lg:mb-4">
             <p className="text-sm font-medium text-neutral-900 truncate">
-              {user?.name} {/* ⚠️ CAMBIÓ: nameuser → name */}
+              {user?.name} {/* CAMBIÓ: nameuser → name */}
             </p>
             <p className="text-xs text-neutral-600 truncate">
               {user?.email}

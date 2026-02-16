@@ -101,13 +101,13 @@ export function useDashboardStats() {
     setError(null);
 
     try {
-      console.log('📊 Cargando estadísticas del dashboard...');
+      console.log('Cargando estadísticas del dashboard...');
 
       const response = await apiRequest('/stats', {
         method: 'GET',
       });
 
-      console.log('✅ Estadísticas cargadas:', response);
+      console.log('Estadísticas cargadas:', response);
 
       if (response && response.success) {
         setStats(response);
@@ -116,24 +116,24 @@ export function useDashboardStats() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      console.error('❌ Error cargando estadísticas:', errorMessage);
+      console.error('Error cargando estadísticas:', errorMessage);
       
       // Verificar si es error de permisos (403)
       if (errorMessage.includes('403') || errorMessage.toLowerCase().includes('sin permisos')) {
-        console.warn('⚠️ Sin permisos para acceder a /stats');
+        console.warn('Sin permisos para acceder a /stats');
         setError('No tienes permisos para ver las estadísticas del sistema');
         setStats(null);
       // Verificar si es error de SQL del backend (500 con column "is_active" does not exist)
       } else if (errorMessage.includes('is_active') || errorMessage.includes('does not exist')) {
-        console.warn('⚠️ Error de backend: La tabla tb_ope_transaction no tiene columna is_active');
+        console.warn('Error de backend: La tabla tb_ope_transaction no tiene columna is_active');
         setError('El backend tiene un error de base de datos. La columna "is_active" no existe en la tabla tb_ope_transaction.');
         setStats(null);
       } else if (errorMessage.toLowerCase().includes('not found') || errorMessage.includes('404')) {
-        console.warn('⚠️ Endpoint /stats no disponible (404)');
+        console.warn('Endpoint /stats no disponible (404)');
         setError('El endpoint de estadísticas aún no está disponible');
         setStats(null);
       } else if (errorMessage.toLowerCase().includes('failed to fetch')) {
-        console.warn('⚠️ Endpoint /stats no disponible aún');
+        console.warn('Endpoint /stats no disponible aún');
         setError('El endpoint de estadísticas aún no está disponible');
         setStats(null);
       } else {
