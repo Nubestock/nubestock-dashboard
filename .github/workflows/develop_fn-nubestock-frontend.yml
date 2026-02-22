@@ -25,74 +25,26 @@ on:
 jobs:
   deploy:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    uses: Nubestock/nubestock-workflows/.github/workflows/static-web-app-deploy-action.yml@master
     permissions:
       contents: read
-    environment: >-
-      ${{
-        github.event.inputs.environment != '' && github.event.inputs.environment != null && github.event.inputs.environment
-        || github.ref_name == 'develop' && 'NUBESTOCK_DEV'
-        || github.ref_name == 'uat' && 'NUBESTOCK_UAT'
-        || github.ref_name == 'master' && 'NUBESTOCK_PRD'
-        || 'NUBESTOCK_DEV'
-      }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          lfs: false
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      # VITE_API_BASE_URL = ruta completa del backend (desde secrets del environment)
-      - name: Build (variables del environment)
-        env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_API_TIMEOUT: ${{ secrets.VITE_API_TIMEOUT }}
-          VITE_API_CODE: ${{ secrets.VITE_API_CODE }}
-        run: npm run build
-      # Proxy /api/* → backend usando la misma VITE_API_BASE_URL (misma origen, sin CORS)
-      - name: Generate staticwebapp.config.json (proxy al backend)
-        env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-        run: |
-          if [ -n "$VITE_API_BASE_URL" ]; then
-            cat > dist/staticwebapp.config.json << EOF
-          {
-            "routes": [
-              {
-                "route": "/api/*",
-                "rewrite": "${VITE_API_BASE_URL}/*"
-              }
-            ]
-          }
-          EOF
-            echo "staticwebapp.config.json generado con backend: $VITE_API_BASE_URL"
-            cat dist/staticwebapp.config.json
-          else
-            echo "VITE_API_BASE_URL no configurado - no se genera proxy"
-          fi
-      - name: Check deploy size (Azure limit 15000 files)
-        run: |
-          COUNT=$(find dist -type f | wc -l)
-          echo "Total files in dist: $COUNT"
-          if [ "$COUNT" -gt 14000 ]; then
-            echo "::warning::dist has $COUNT files (Azure limit 15000). Consider reducing build output."
-          fi
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "dist"
-          output_location: "."
-          skip_app_build: true
+    with:
+      environment: >-
+        ${{
+          github.event.inputs.environment != '' && github.event.inputs.environment
+          || github.ref_name == 'develop' && 'NUBESTOCK_DEV'
+          || github.ref_name == 'uat' && 'NUBESTOCK_UAT'
+          || github.ref_name == 'master' && 'NUBESTOCK_PRD'
+          || 'NUBESTOCK_DEV'
+        }}
+      node_version: '20'
+    secrets:
+      AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+      VITE_API_TIMEOUT: ${{ secrets.VITE_API_TIMEOUT }}
+      VITE_API_CODE: ${{ secrets.VITE_API_CODE }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # Preview en PRs (usa NUBESTOCK_DEV)
   build_and_deploy_job:
