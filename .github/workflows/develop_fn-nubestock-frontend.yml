@@ -40,7 +40,6 @@ jobs:
       node_version: '20'
     secrets:
       AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
       VITE_API_TIMEOUT: ${{ secrets.VITE_API_TIMEOUT }}
       VITE_API_CODE: ${{ secrets.VITE_API_CODE }}
