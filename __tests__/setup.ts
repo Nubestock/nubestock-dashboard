@@ -7,18 +7,20 @@
 
 import '@testing-library/jest-dom';
 
-// Mock de variables de entorno de Vite
-Object.defineProperty(import.meta, 'env', {
-  value: {
-    VITE_API_BASE_URL: 'http://localhost:3000',
-    VITE_API_TIMEOUT: '30000',
-    VITE_API_CODE: 'test-code',
-    MODE: 'test',
-    DEV: false,
-    PROD: false,
-    SSR: false,
-  },
-});
+// Mock de variables de entorno de Vite usando globalThis
+// Jest no soporta import.meta directamente, así que creamos un mock global
+const mockEnv = {
+  VITE_API_BASE_URL: 'http://localhost:3000',
+  VITE_API_TIMEOUT: '30000',
+  VITE_API_CODE: 'test-code',
+  MODE: 'test',
+  DEV: false,
+  PROD: false,
+  SSR: false,
+};
+
+// @ts-expect-error - Mock para entorno de test
+globalThis.import_meta_env = mockEnv;
 
 // Mock global de window.matchMedia (necesario para componentes responsive)
 Object.defineProperty(window, 'matchMedia', {
