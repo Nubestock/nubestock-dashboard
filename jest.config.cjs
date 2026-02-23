@@ -10,14 +10,22 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
+    // Solo analizar componentes (excepto UI de shadcn)
+    'src/app/components/**/*.{ts,tsx}',
+    // Excluir archivos que no deben tener cobertura
     '!src/**/*.d.ts',
     '!src/vite-env.d.ts',
     '!src/main.tsx',
     '!src/types/**',
     '!src/styles/**',
     '!src/app/components/ui/**',
-    '!src/app/components/ConfigurationView.tsx',
+    // Excluir contexts, hooks, utils, examples, config
+    '!src/app/contexts/**',
+    '!src/app/hooks/**',
+    '!src/app/utils/**',
+    '!src/app/examples/**',
+    '!src/app/config/**',
+    '!src/app/types/**',
   ],
   
   coverageDirectory: 'coverage',
