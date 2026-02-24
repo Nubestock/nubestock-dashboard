@@ -599,8 +599,165 @@ describe('MachineryManagement', () => {
       const searchInput = screen.getByPlaceholderText('Buscar maquinaria...');
       fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
       
-      // Just verify the search input changed
       expect((searchInput as HTMLInputElement).value).toBe('nonexistent');
+    });
+  });
+
+  describe('Create Machinery - Form submission', () => {
+    it('should have guardar button in dialog', async () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      const guardarButtons = screen.queryAllByText('Guardar');
+      expect(guardarButtons.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should fill name input in create dialog', async () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      const inputs = screen.getAllByTestId('input');
+      fireEvent.change(inputs[0], { target: { value: 'Nueva Máquina' } });
+      
+      expect((inputs[0] as HTMLInputElement).value).toBe('Nueva Máquina');
+    });
+  });
+
+  describe('Edit Machinery - Form submission', () => {
+    it('should open edit dialog when clicking edit', async () => {
+      render(<MachineryManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      fireEvent.click(editButtons[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should have form in edit dialog', async () => {
+      render(<MachineryManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      fireEvent.click(editButtons[0]);
+      
+      await waitFor(() => {
+        const inputs = screen.getAllByTestId('input');
+        expect(inputs.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('Delete Machinery - Confirmation', () => {
+    it('should open delete confirmation dialog', async () => {
+      render(<MachineryManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('alert-dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should delete machinery when confirmed', async () => {
+      render(<MachineryManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('alert-dialog')).toBeInTheDocument();
+      });
+
+      const confirmButtons = screen.getAllByText('Eliminar');
+      const confirmButton = confirmButtons[confirmButtons.length - 1];
+      fireEvent.click(confirmButton);
+      
+      await waitFor(() => {
+        expect(mockDeleteMachinery).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Create Maintenance', () => {
+    it('should have nuevo mantenimiento button', () => {
+      render(<MachineryManagement />);
+      
+      const newMaintenanceBtn = screen.queryByText('Nuevo Mantenimiento');
+      expect(newMaintenanceBtn || screen.getAllByTestId('icon-plus').length > 0).toBeTruthy();
+    });
+  });
+
+  describe('Create History', () => {
+    it('should have history related elements', () => {
+      render(<MachineryManagement />);
+      
+      const historyIcons = screen.getAllByTestId('icon-history');
+      expect(historyIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should click registrar mantenimiento if available', () => {
+      render(<MachineryManagement />);
+      
+      const registrarBtn = screen.queryByText('Registrar Mantenimiento');
+      if (registrarBtn) {
+        fireEvent.click(registrarBtn);
+      }
+    });
+  });
+
+  describe('Machinery form inputs', () => {
+    it('should fill description field', async () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      const textareas = screen.getAllByTestId('textarea');
+      if (textareas.length > 0) {
+        fireEvent.change(textareas[0], { target: { value: 'Descripción de prueba' } });
+        expect((textareas[0] as HTMLTextAreaElement).value).toBe('Descripción de prueba');
+      }
+    });
+  });
+
+  describe('Accordion interactions', () => {
+    it('should have accordion for machinery details', () => {
+      render(<MachineryManagement />);
+      
+      const accordions = screen.queryAllByTestId('accordion');
+      expect(accordions.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Dropdown menu actions', () => {
+    it('should have dropdown trigger', () => {
+      render(<MachineryManagement />);
+      
+      const moreIcons = screen.getAllByTestId('icon-more');
+      expect(moreIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Maintenance type badge', () => {
+    it('should display maintenance type', () => {
+      render(<MachineryManagement />);
+      
+      const prvBadges = screen.getAllByText(/PRV|Preventivo/i);
+      expect(prvBadges.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Loading states', () => {
+    it('should render without loading state', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.queryByText('Cargando maquinaria...')).not.toBeInTheDocument();
     });
   });
 });

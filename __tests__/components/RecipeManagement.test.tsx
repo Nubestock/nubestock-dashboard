@@ -697,4 +697,102 @@ describe('RecipeManagement', () => {
       expect(trashIcons.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Add material row', () => {
+    it('should have agregar button in dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        const agregarBtn = screen.getByText('Agregar');
+        expect(agregarBtn).toBeInTheDocument();
+      });
+    });
+
+    it('should click agregar button', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        const agregarBtn = screen.getByText('Agregar');
+        fireEvent.click(agregarBtn);
+      });
+    });
+  });
+
+  describe('Recipe save validation', () => {
+    it('should have crear button in dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        const crearBtn = screen.getByText('Crear');
+        expect(crearBtn).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Select product for recipe', () => {
+    it('should have product selector in dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText('Producto Final *')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Recipe editing', () => {
+    it('should open edit dialog with product data', async () => {
+      render(<RecipeManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        await fireEvent.click(editButtons[0]);
+      }
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Empty materials message', () => {
+    it('should show empty materials message in new recipe dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText('No hay materiales agregados')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Filter by recipe status', () => {
+    it('should have filter dropdown', () => {
+      render(<RecipeManagement />);
+      
+      expect(screen.getByText('Todos los productos')).toBeInTheDocument();
+    });
+  });
+
+  describe('Material table in recipe', () => {
+    it('should show table headers', () => {
+      render(<RecipeManagement />);
+      
+      expect(screen.getByText('Material')).toBeInTheDocument();
+      expect(screen.getByText('Código SKU')).toBeInTheDocument();
+    });
+  });
 });

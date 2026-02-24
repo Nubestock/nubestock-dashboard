@@ -610,12 +610,104 @@ describe('SalesManagement', () => {
     it('should load sales on status filter change', () => {
       render(<SalesManagement />);
       
-      // Click a filter to trigger loadSales
       const pendingButtons = screen.getAllByText('Pendientes');
       if (pendingButtons.length > 0) {
         fireEvent.click(pendingButtons[0]);
         expect(mockFetchSales).toHaveBeenCalled();
       }
+    });
+  });
+
+  describe('Create sale form', () => {
+    it('should have client selection in dialog', async () => {
+      render(<SalesManagement />);
+      
+      const newSaleBtn = screen.getByText('Nueva Venta');
+      fireEvent.click(newSaleBtn);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should have inputs in dialog', async () => {
+      render(<SalesManagement />);
+      
+      const newSaleBtn = screen.getByText('Nueva Venta');
+      fireEvent.click(newSaleBtn);
+      
+      await waitFor(() => {
+        const inputs = screen.getAllByTestId('input');
+        expect(inputs.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('Sale products', () => {
+    it('should have cart icon for sales', () => {
+      render(<SalesManagement />);
+      
+      const cartIcons = screen.getAllByTestId('icon-cart');
+      expect(cartIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Payment methods', () => {
+    it('should display credit card icon', () => {
+      render(<SalesManagement />);
+      
+      const creditIcons = screen.getAllByTestId('icon-credit');
+      expect(creditIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should display banknote icon for cash', () => {
+      render(<SalesManagement />);
+      
+      const banknoteIcons = screen.getAllByTestId('icon-banknote');
+      expect(banknoteIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Sale detail view', () => {
+    it('should click view button', () => {
+      render(<SalesManagement />);
+      
+      const eyeIcons = screen.getAllByTestId('icon-eye');
+      if (eyeIcons.length > 0) {
+        const button = eyeIcons[0].closest('button');
+        if (button) fireEvent.click(button);
+      }
+    });
+  });
+
+  describe('Refresh sales', () => {
+    it('should have refresh icon', () => {
+      render(<SalesManagement />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Filter panel', () => {
+    it('should have filter sheet title', () => {
+      render(<SalesManagement />);
+      
+      expect(screen.getByText('Filtrar Ventas')).toBeInTheDocument();
+    });
+  });
+
+  describe('Cancel button', () => {
+    it('should have cancel button in dialog', async () => {
+      render(<SalesManagement />);
+      
+      const newSaleBtn = screen.getByText('Nueva Venta');
+      fireEvent.click(newSaleBtn);
+      
+      await waitFor(() => {
+        const cancelButtons = screen.getAllByText('Cancelar');
+        expect(cancelButtons.length).toBeGreaterThan(0);
+      });
     });
   });
 });

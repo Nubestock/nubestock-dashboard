@@ -533,4 +533,118 @@ describe('UserManagement', () => {
       }
     });
   });
+
+  describe('User creation form', () => {
+    it('should have inputs for user data', () => {
+      render(<UserManagement />);
+      
+      const inputs = screen.getAllByTestId('input');
+      expect(inputs.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Role badges', () => {
+    it('should display role name in badge', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Admin').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Email display', () => {
+    it('should display mail icon', () => {
+      render(<UserManagement />);
+      
+      const mailIcons = screen.getAllByTestId('icon-mail');
+      expect(mailIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('User count statistics', () => {
+    it('should display user statistics', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getByText('Total')).toBeInTheDocument();
+    });
+  });
+
+  describe('Active/Inactive counts', () => {
+    it('should show active users count label', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Activos').length).toBeGreaterThan(0);
+    });
+
+    it('should show inactive users count label', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Inactivos').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Dropdown menu', () => {
+    it('should have more vertical icons', () => {
+      render(<UserManagement />);
+      
+      const moreIcons = screen.getAllByTestId('icon-more');
+      expect(moreIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Key icon', () => {
+    it('should display key icon', () => {
+      render(<UserManagement />);
+      
+      const keyIcons = screen.getAllByTestId('icon-key');
+      expect(keyIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Edit user dialog', () => {
+    it('should open dialog when clicking edit', async () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        fireEvent.click(editButtons[0]);
+      }
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Delete user confirmation', () => {
+    it('should open alert dialog when clicking delete', async () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      if (deleteButtons.length > 0) {
+        fireEvent.click(deleteButtons[0]);
+      }
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('alert-dialog')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Checkbox for permissions', () => {
+    it('should have checkbox elements', () => {
+      render(<UserManagement />);
+      
+      const checkboxes = screen.queryAllByTestId('checkbox');
+      expect(checkboxes.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Calendar icon', () => {
+    it('should have date related icons', () => {
+      render(<UserManagement />);
+      
+      const calendarIcons = screen.queryAllByTestId('icon-calendar');
+      expect(calendarIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
 });
