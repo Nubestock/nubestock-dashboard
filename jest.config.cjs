@@ -12,8 +12,12 @@ module.exports = {
   collectCoverageFrom: [
     // Solo analizar componentes (excepto UI de shadcn)
     'src/app/components/**/*.{ts,tsx}',
+    // Incluir App.tsx
+    'src/app/App.tsx',
     // Excluir archivos que no deben tener cobertura
     '!src/**/*.d.ts',
+    // Excluir ConfigurationView (usa import.meta.env incompatible con Jest)
+    '!src/app/components/ConfigurationView.tsx',
     '!src/vite-env.d.ts',
     '!src/main.tsx',
     '!src/types/**',
