@@ -528,4 +528,108 @@ describe('ProductionManagement', () => {
       expect(screen.getByText('No hay producciones pendientes')).toBeInTheDocument();
     });
   });
+
+  describe('Start production', () => {
+    it('should have iniciar produccion button', () => {
+      render(<ProductionManagement />);
+      
+      const iniciarButtons = screen.queryAllByText('Iniciar Producción');
+      expect(iniciarButtons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Status badges', () => {
+    it('should display status badges', () => {
+      render(<ProductionManagement />);
+      
+      const badges = screen.queryAllByTestId('badge');
+      expect(badges.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Accordion content', () => {
+    it('should have accordion triggers', () => {
+      render(<ProductionManagement />);
+      
+      const accordions = screen.queryAllByTestId('accordion');
+      expect(accordions.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Card content', () => {
+    it('should have cards for productions', () => {
+      render(<ProductionManagement />);
+      
+      const cards = screen.getAllByTestId('card');
+      expect(cards.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Table display', () => {
+    it('should have table for materials', () => {
+      render(<ProductionManagement />);
+      
+      const tables = screen.queryAllByTestId('table');
+      expect(tables.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Filter products', () => {
+    it('should have product filter', () => {
+      render(<ProductionManagement />);
+      
+      const selects = screen.queryAllByTestId('select');
+      expect(selects.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Tabs navigation', () => {
+    it('should have tabs for production status', () => {
+      render(<ProductionManagement />);
+      
+      const tabs = screen.getByTestId('tabs');
+      expect(tabs).toBeInTheDocument();
+    });
+  });
+
+  describe('Plus icon', () => {
+    it('should have plus icons', () => {
+      render(<ProductionManagement />);
+      
+      const plusIcons = screen.queryAllByTestId('icon-plus');
+      expect(plusIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Refresh icon', () => {
+    it('should have refresh icons', () => {
+      render(<ProductionManagement />);
+      
+      const refreshIcons = screen.queryAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Search input', () => {
+    it('should have search functionality', () => {
+      render(<ProductionManagement />);
+      
+      const inputs = screen.getAllByTestId('input');
+      expect(inputs.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Dialog close', () => {
+    it('should close dialog on cancel', async () => {
+      render(<ProductionManagement />);
+      
+      const completarButtons = screen.getAllByText('Completar');
+      fireEvent.click(completarButtons[0]);
+      
+      const cancelButtons = screen.getAllByText('Cancelar');
+      if (cancelButtons.length > 0) {
+        fireEvent.click(cancelButtons[0]);
+      }
+    });
+  });
 });

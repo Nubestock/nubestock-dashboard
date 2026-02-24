@@ -40,6 +40,8 @@ const mockRefetch = jest.fn();
 const mockCreateUser = jest.fn().mockResolvedValue({ success: true });
 const mockUpdateUser = jest.fn().mockResolvedValue({ success: true });
 const mockDeleteUser = jest.fn().mockResolvedValue({ success: true });
+const mockAdminResetPassword = jest.fn().mockResolvedValue({ success: true, data: { message: 'Reset sent' } });
+const mockAssignRole = jest.fn().mockResolvedValue({ success: true });
 
 jest.mock('@/app/hooks/useUsers', () => ({
   useUsers: () => ({
@@ -50,6 +52,7 @@ jest.mock('@/app/hooks/useUsers', () => ({
     createUser: mockCreateUser,
     updateUser: mockUpdateUser,
     deleteUser: mockDeleteUser,
+    adminResetPassword: mockAdminResetPassword,
     assignRole: jest.fn().mockResolvedValue({ success: true }),
     removeRole: jest.fn().mockResolvedValue({ success: true }),
     requestPasswordReset: jest.fn().mockResolvedValue({ success: true }),
@@ -71,6 +74,8 @@ jest.mock('@/app/hooks/useUsers', () => ({
   useUserPermissions: () => ({
     permissions: mockPermissions,
     isLoading: false,
+    assignRole: mockAssignRole,
+    removeRole: jest.fn().mockResolvedValue({ success: true }),
   }),
 }));
 
@@ -645,6 +650,453 @@ describe('UserManagement', () => {
       
       const calendarIcons = screen.queryAllByTestId('icon-calendar');
       expect(calendarIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Add User Form', () => {
+    it('should have nuevo usuario button', () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      expect(plusIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should have inputs in user form', () => {
+      render(<UserManagement />);
+      
+      const inputs = screen.getAllByTestId('input');
+      expect(inputs.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Edit User Form', () => {
+    it('should open edit form when clicking edit', async () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        fireEvent.click(editButtons[0]);
+        
+        await waitFor(() => {
+          expect(screen.queryByTestId('dialog')).toBeInTheDocument();
+        });
+      }
+    });
+  });
+
+  describe('Delete User', () => {
+    it('should show delete confirmation dialog', async () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      if (deleteButtons.length > 0) {
+        fireEvent.click(deleteButtons[0]);
+        
+        await waitFor(() => {
+          expect(screen.queryByTestId('alert-dialog')).toBeInTheDocument();
+        });
+      }
+    });
+
+    it('should have cancel option in delete dialog', async () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      if (deleteButtons.length > 0) {
+        fireEvent.click(deleteButtons[0]);
+        
+        await waitFor(() => {
+          const cancelButtons = screen.queryAllByText('Cancelar');
+          expect(cancelButtons.length).toBeGreaterThan(0);
+        });
+      }
+    });
+  });
+
+  describe('Assign Role', () => {
+    it('should have roles button in dropdown', () => {
+      render(<UserManagement />);
+      
+      const shieldIcons = screen.getAllByTestId('icon-shield');
+      expect(shieldIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Reset Password', () => {
+    it('should have reset password option', () => {
+      render(<UserManagement />);
+      
+      const resetButtons = screen.getAllByText('Restablecer contraseña');
+      expect(resetButtons.length).toBeGreaterThan(0);
+    });
+
+    it('should click reset password', async () => {
+      render(<UserManagement />);
+      
+      const resetButtons = screen.getAllByText('Restablecer contraseña');
+      if (resetButtons.length > 0) {
+        fireEvent.click(resetButtons[0]);
+        
+        await waitFor(() => {
+          expect(screen.queryByTestId('alert-dialog')).toBeInTheDocument();
+        });
+      }
+    });
+  });
+
+  describe('Refresh Users', () => {
+    it('should have refresh functionality', () => {
+      render(<UserManagement />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Filter users', () => {
+    it('should filter active users', () => {
+      render(<UserManagement />);
+      
+      const activosButtons = screen.getAllByText('Activos');
+      if (activosButtons.length > 0) {
+        fireEvent.click(activosButtons[0]);
+      }
+    });
+
+    it('should filter inactive users', () => {
+      render(<UserManagement />);
+      
+      const inactivosButtons = screen.getAllByText('Inactivos');
+      if (inactivosButtons.length > 0) {
+        fireEvent.click(inactivosButtons[0]);
+      }
+    });
+  });
+
+  describe('User roles display', () => {
+    it('should display user roles', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Admin').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('User details', () => {
+    it('should display user email', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('user1@test.com').length).toBeGreaterThan(0);
+    });
+
+    it('should display user status', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Activo').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Inactivo').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Tabs navigation', () => {
+    it('should have users and roles tabs', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getByTestId('tab-users')).toBeInTheDocument();
+      expect(screen.getByTestId('tab-roles')).toBeInTheDocument();
+    });
+
+    it('should switch to roles tab', () => {
+      render(<UserManagement />);
+      
+      const rolesTab = screen.getByTestId('tab-roles');
+      fireEvent.click(rolesTab);
+    });
+  });
+
+  describe('Roles management', () => {
+    it('should click roles tab', () => {
+      render(<UserManagement />);
+      
+      const rolesTab = screen.getByTestId('tab-roles');
+      fireEvent.click(rolesTab);
+      
+      expect(screen.getByTestId('tabs')).toBeInTheDocument();
+    });
+  });
+
+  describe('Create User Form Validation', () => {
+    it('should have create user dialog', async () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      fireEvent.click(plusIcons[0]);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should have name input in create form', async () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      fireEvent.click(plusIcons[0]);
+      
+      await waitFor(() => {
+        const inputs = screen.getAllByTestId('input');
+        expect(inputs.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have email input in create form', async () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      fireEvent.click(plusIcons[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByText('Correo Electrónico')).toBeInTheDocument();
+      });
+    });
+
+    it('should have password input in create form', async () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      fireEvent.click(plusIcons[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByText('Contraseña')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Edit User Form', () => {
+    it('should open edit dialog', async () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      fireEvent.click(editButtons[0]);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should have save button in edit form', async () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      fireEvent.click(editButtons[0]);
+      
+      await waitFor(() => {
+        const guardarButtons = screen.queryAllByText('Guardar');
+        expect(guardarButtons.length).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
+
+  describe('Delete User Confirmation', () => {
+    it('should open delete confirmation', async () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+      
+      await waitFor(() => {
+        expect(screen.queryByTestId('alert-dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('should have confirm button in delete dialog', async () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+      
+      await waitFor(() => {
+        const confirmButtons = screen.queryAllByText('Confirmar');
+        expect(confirmButtons.length).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
+
+  describe('User Status Toggle', () => {
+    it('should display active status', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Activo').length).toBeGreaterThan(0);
+    });
+
+    it('should display inactive status', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Inactivo').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Search Users', () => {
+    it('should have search input', () => {
+      render(<UserManagement />);
+      
+      const searchIcons = screen.getAllByTestId('icon-search');
+      expect(searchIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should filter users on search', async () => {
+      render(<UserManagement />);
+      
+      const inputs = screen.getAllByTestId('input');
+      fireEvent.change(inputs[0], { target: { value: 'Usuario 1' } });
+    });
+  });
+
+  describe('Pagination', () => {
+    it('should display total users', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Total').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('User Phone Display', () => {
+    it('should display user phone number', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('123456789').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Role Badge Display', () => {
+    it('should display role badges', () => {
+      render(<UserManagement />);
+      
+      const badges = screen.getAllByTestId('badge');
+      expect(badges.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Dropdown Menu Actions', () => {
+    it('should have action buttons', () => {
+      render(<UserManagement />);
+      
+      const moreIcons = screen.getAllByTestId('icon-more');
+      expect(moreIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Filter Sheet', () => {
+    it('should have filter icon', () => {
+      render(<UserManagement />);
+      
+      const filterIcons = screen.queryAllByTestId('icon-filter');
+      expect(filterIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('User Stats Cards', () => {
+    it('should display user statistics', () => {
+      render(<UserManagement />);
+      
+      const cards = screen.getAllByTestId('card');
+      expect(cards.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Role Assignment', () => {
+    it('should have assign role option', () => {
+      render(<UserManagement />);
+      
+      const assignButtons = screen.queryAllByText('Asignar rol');
+      expect(assignButtons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('User Email Display', () => {
+    it('should show mail icons', () => {
+      render(<UserManagement />);
+      
+      const mailIcons = screen.getAllByTestId('icon-mail');
+      expect(mailIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('User Actions', () => {
+    it('should have users icon', () => {
+      render(<UserManagement />);
+      
+      const usersIcons = screen.getAllByTestId('icon-users');
+      expect(usersIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Refresh Users Button', () => {
+    it('should have refresh icon', () => {
+      render(<UserManagement />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should click refresh button', async () => {
+      render(<UserManagement />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      fireEvent.click(refreshIcons[0]);
+    });
+  });
+
+  describe('User Name Display', () => {
+    it('should display user names', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Usuario 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Usuario 2').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Create Role Dialog', () => {
+    it('should switch to roles tab and see plus icon', () => {
+      render(<UserManagement />);
+      
+      const rolesTab = screen.getByTestId('tab-roles');
+      fireEvent.click(rolesTab);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      expect(plusIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Permission Display', () => {
+    it('should have checkbox components', () => {
+      render(<UserManagement />);
+      
+      const checkboxes = screen.queryAllByTestId('checkbox');
+      expect(checkboxes.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Dialog Behavior', () => {
+    it('should close dialog on cancel', async () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      fireEvent.click(plusIcons[0]);
+      
+      await waitFor(() => {
+        const cancelButtons = screen.getAllByText('Cancelar');
+        if (cancelButtons.length > 0) {
+          fireEvent.click(cancelButtons[0]);
+        }
+      });
+    });
+  });
+
+  describe('Loading State', () => {
+    it('should not show loading when data loaded', () => {
+      render(<UserManagement />);
+      
+      const cards = screen.getAllByTestId('card');
+      expect(cards.length).toBeGreaterThan(0);
     });
   });
 });

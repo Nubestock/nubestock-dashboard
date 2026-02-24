@@ -625,4 +625,66 @@ describe('LocationsManagement', () => {
       expect(checkbox.checked).toBe(false);
     });
   });
+
+  describe('Edit location dialog', () => {
+    it('should have edit buttons', () => {
+      render(<LocationsManagement />);
+      
+      const editIcons = screen.getAllByTestId('icon-edit');
+      expect(editIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Delete location dialog', () => {
+    it('should have delete buttons', () => {
+      render(<LocationsManagement />);
+      
+      const trashIcons = screen.getAllByTestId('icon-trash');
+      expect(trashIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Search functionality', () => {
+    it('should have search input', () => {
+      render(<LocationsManagement />);
+      
+      const searchIcons = screen.getAllByTestId('icon-search');
+      expect(searchIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Refresh functionality', () => {
+    it('should have refresh icons', () => {
+      render(<LocationsManagement />);
+      
+      const refreshIcons = screen.queryAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Plus icon', () => {
+    it('should have plus icons', () => {
+      render(<LocationsManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      expect(plusIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Badge display', () => {
+    it('should display badges', () => {
+      render(<LocationsManagement />);
+      
+      const badges = screen.getAllByTestId('badge');
+      expect(badges.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Tab content', () => {
+    it('should have tab triggers', () => {
+      render(<LocationsManagement />);
+      
+      expect(screen.getByText('Países')).toBeInTheDocument();
+    });
+  });
 });

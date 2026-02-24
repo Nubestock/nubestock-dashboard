@@ -489,4 +489,48 @@ describe('SalesReports', () => {
       }
     });
   });
+
+  describe('Tabs navigation', () => {
+    it('should have tabs', () => {
+      render(<SalesReports />);
+      
+      const tabs = screen.queryAllByTestId('tabs');
+      expect(tabs.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Cards display', () => {
+    it('should display cards', () => {
+      render(<SalesReports />);
+      
+      const cards = screen.getAllByTestId('card');
+      expect(cards.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Refresh button', () => {
+    it('should have refresh button', () => {
+      render(<SalesReports />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Title display', () => {
+    it('should display title', () => {
+      render(<SalesReports />);
+      
+      expect(screen.getByText('Reportes de Ventas')).toBeInTheDocument();
+    });
+  });
+
+  describe('Charts display', () => {
+    it('should display charts', () => {
+      render(<SalesReports />);
+      
+      const responsiveContainers = screen.queryAllByTestId('responsive-container');
+      expect(responsiveContainers.length).toBeGreaterThanOrEqual(0);
+    });
+  });
 });

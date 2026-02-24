@@ -450,4 +450,90 @@ describe('Dashboard', () => {
       expect(screen.getByText(/UNKNOWN - P6/)).toBeInTheDocument();
     });
   });
+
+  describe('Empty sales by week', () => {
+    beforeEach(() => {
+      mockStats = {
+        ...sampleStats,
+        data: {
+          ...sampleStats.data,
+          sales: {
+            ...sampleStats.data.sales,
+            byWeek: [],
+          },
+        },
+      };
+    });
+
+    it('should show empty state when no weekly sales', () => {
+      render(<Dashboard />);
+      
+      expect(screen.getByText('No hay datos de ventas este mes')).toBeInTheDocument();
+    });
+  });
+
+  describe('Empty sales by week null', () => {
+    beforeEach(() => {
+      mockStats = {
+        ...sampleStats,
+        data: {
+          ...sampleStats.data,
+          sales: {
+            ...sampleStats.data.sales,
+            byWeek: null,
+          },
+        },
+      };
+    });
+
+    it('should show empty state when byWeek is null', () => {
+      render(<Dashboard />);
+      
+      expect(screen.getByText('No hay datos de ventas este mes')).toBeInTheDocument();
+    });
+  });
+
+  describe('Transaction icon for AJU type', () => {
+    beforeEach(() => {
+      mockStats = {
+        ...sampleStats,
+        data: {
+          ...sampleStats.data,
+          transactions: {
+            recent: [
+              { id: 7, type: 'AJU', direction: '', product_name: 'P7', user_name: 'U7', quantity: 7, has_waste: false, creation_date: '2024-01-15T04:00:00Z' },
+            ],
+          },
+        },
+      };
+    });
+
+    it('should render Ajuste label', () => {
+      render(<Dashboard />);
+      
+      expect(screen.getByText(/Ajuste - P7/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Transaction icon for PROD type without + direction', () => {
+    beforeEach(() => {
+      mockStats = {
+        ...sampleStats,
+        data: {
+          ...sampleStats.data,
+          transactions: {
+            recent: [
+              { id: 8, type: 'PROD', direction: '', product_name: 'P8', user_name: 'U8', quantity: 8, has_waste: false, creation_date: '2024-01-15T03:00:00Z' },
+            ],
+          },
+        },
+      };
+    });
+
+    it('should render PROD type correctly', () => {
+      render(<Dashboard />);
+      
+      expect(screen.getByText(/Producción - P8/)).toBeInTheDocument();
+    });
+  });
 });

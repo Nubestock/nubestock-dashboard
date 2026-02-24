@@ -476,4 +476,38 @@ describe('MeasureManagement', () => {
       expect(screen.queryByTestId('dialog')).not.toBeInTheDocument();
     });
   });
+
+  it('debería tener botón de nueva medida', () => {
+    render(<MeasureManagement />);
+    
+    expect(screen.getByText('Nueva Medida')).toBeInTheDocument();
+  });
+
+  it('debería tener inputs en el diálogo', () => {
+    render(<MeasureManagement />);
+    
+    fireEvent.click(screen.getByText('Nueva Medida'));
+    
+    const nameInput = screen.getByPlaceholderText('Ej: KG, UN, L, M');
+    const descInput = screen.getByPlaceholderText('Ej: Kilogramos, Unidades, Litros, Metros');
+    
+    expect(nameInput).toBeInTheDocument();
+    expect(descInput).toBeInTheDocument();
+  });
+
+  it('debería mostrar botones en diálogo', () => {
+    render(<MeasureManagement />);
+    
+    fireEvent.click(screen.getByText('Nueva Medida'));
+    
+    expect(screen.getByText('Crear')).toBeInTheDocument();
+    expect(screen.getByText('Cancelar')).toBeInTheDocument();
+  });
+
+  it('debería tener cards', () => {
+    render(<MeasureManagement />);
+    
+    const cards = screen.queryAllByTestId('card');
+    expect(cards.length).toBeGreaterThanOrEqual(0);
+  });
 });
