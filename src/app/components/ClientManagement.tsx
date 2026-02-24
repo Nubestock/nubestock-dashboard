@@ -329,7 +329,7 @@ export default function ClientManagement() {
               <p className="text-xs sm:text-sm text-neutral-600">Crédito Total</p>
               <div className="flex items-end justify-between">
                 <span className="text-lg sm:text-xl font-bold text-purple-600">
-                  ${(totalCreditLimit / 1000).toFixed(0)}K
+                  {(Number.isFinite(totalCreditLimit) ? (totalCreditLimit / 1000).toFixed(0) : '') + 'K'}
                 </span>
                 <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600/40" />
               </div>

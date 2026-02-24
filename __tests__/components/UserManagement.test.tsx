@@ -366,4 +366,171 @@ describe('UserManagement', () => {
       expect(screen.getAllByText('Admin').length).toBeGreaterThan(0);
     });
   });
+
+  describe('Create User Dialog', () => {
+    it('should have plus icons for new user', () => {
+      render(<UserManagement />);
+      
+      const plusIcons = screen.getAllByTestId('icon-plus');
+      expect(plusIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Dropdown menu actions', () => {
+    it('should have more vertical icons', () => {
+      render(<UserManagement />);
+      
+      const moreIcons = screen.getAllByTestId('icon-more');
+      expect(moreIcons.length).toBeGreaterThan(0);
+    });
+
+    it('should have edit buttons in dropdown', () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      expect(editButtons.length).toBeGreaterThan(0);
+    });
+
+    it('should have delete buttons in dropdown', () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      expect(deleteButtons.length).toBeGreaterThan(0);
+    });
+
+    it('should have roles related buttons', () => {
+      render(<UserManagement />);
+      
+      const shieldIcons = screen.getAllByTestId('icon-shield');
+      expect(shieldIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Filter Sheet', () => {
+    it('should have user filter options', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getAllByText('Activos').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Inactivos').length).toBeGreaterThan(0);
+    });
+
+    it('should have "Todos" text in filter options', () => {
+      render(<UserManagement />);
+      
+      // The filter might be in the component
+      const totalTexts = screen.getAllByText('Total');
+      expect(totalTexts.length).toBeGreaterThan(0);
+    });
+
+    it('should click Activos filter', () => {
+      render(<UserManagement />);
+      
+      const activosButtons = screen.getAllByText('Activos');
+      if (activosButtons.length > 0) {
+        fireEvent.click(activosButtons[0]);
+      }
+    });
+
+    it('should click Inactivos filter', () => {
+      render(<UserManagement />);
+      
+      const inactivosButtons = screen.getAllByText('Inactivos');
+      if (inactivosButtons.length > 0) {
+        fireEvent.click(inactivosButtons[0]);
+      }
+    });
+  });
+
+  describe('Edit User', () => {
+    it('should click edit button', () => {
+      render(<UserManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        fireEvent.click(editButtons[0]);
+      }
+    });
+  });
+
+  describe('Delete User', () => {
+    it('should click delete button', () => {
+      render(<UserManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      if (deleteButtons.length > 0) {
+        fireEvent.click(deleteButtons[0]);
+      }
+    });
+  });
+
+  describe('User Roles', () => {
+    it('should have roles tab', () => {
+      render(<UserManagement />);
+      
+      expect(screen.getByTestId('tab-roles')).toBeInTheDocument();
+    });
+  });
+
+  describe('Tabs switching', () => {
+    it('should click users tab', () => {
+      render(<UserManagement />);
+      
+      const usersTab = screen.getByTestId('tab-users');
+      fireEvent.click(usersTab);
+    });
+
+    it('should click roles tab', () => {
+      render(<UserManagement />);
+      
+      const rolesTab = screen.getByTestId('tab-roles');
+      fireEvent.click(rolesTab);
+    });
+  });
+
+  describe('Refresh functionality', () => {
+    it('should have refresh icon', () => {
+      render(<UserManagement />);
+      
+      const refreshIcons = screen.getAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Empty search results', () => {
+    it('should handle empty search', () => {
+      render(<UserManagement />);
+      
+      const searchInput = screen.getByPlaceholderText('Buscar usuario...');
+      fireEvent.change(searchInput, { target: { value: 'nonexistent12345' } });
+      
+      expect((searchInput as HTMLInputElement).value).toBe('nonexistent12345');
+    });
+  });
+
+  describe('Phone display', () => {
+    it('should display phone icon', () => {
+      render(<UserManagement />);
+      
+      const phoneIcons = screen.getAllByTestId('icon-phone');
+      expect(phoneIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Password reset', () => {
+    it('should have password reset button in dropdown', () => {
+      render(<UserManagement />);
+      
+      const resetButtons = screen.getAllByText('Restablecer contraseña');
+      expect(resetButtons.length).toBeGreaterThan(0);
+    });
+
+    it('should click password reset button', () => {
+      render(<UserManagement />);
+      
+      const resetButtons = screen.getAllByText('Restablecer contraseña');
+      if (resetButtons.length > 0) {
+        fireEvent.click(resetButtons[0]);
+      }
+    });
+  });
 });

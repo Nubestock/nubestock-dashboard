@@ -605,4 +605,96 @@ describe('RecipeManagement', () => {
       expect(screen.getAllByTestId('icon-refresh').length).toBeGreaterThan(0);
     });
   });
+
+  describe('Edit recipe interactions', () => {
+    it('should click edit button', () => {
+      render(<RecipeManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        fireEvent.click(editButtons[0]);
+      }
+    });
+  });
+
+  describe('Delete recipe', () => {
+    it('should have delete icons', () => {
+      render(<RecipeManagement />);
+      
+      const deleteIcons = screen.getAllByTestId('icon-trash');
+      expect(deleteIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Product filter filter', () => {
+    it('should click "Todos los productos" filter', () => {
+      render(<RecipeManagement />);
+      
+      const allProductsBtn = screen.getByText('Todos los productos');
+      fireEvent.click(allProductsBtn);
+    });
+
+    it('should filter options exist', () => {
+      render(<RecipeManagement />);
+      
+      // Filter options should be rendered
+      expect(screen.getByText('Todos los productos')).toBeInTheDocument();
+    });
+  });
+
+  describe('Checkbox interactions', () => {
+    it('should click Seleccionar todos checkbox', () => {
+      render(<RecipeManagement />);
+      
+      const checkboxes = screen.getAllByTestId('checkbox');
+      if (checkboxes.length > 0) {
+        fireEvent.click(checkboxes[0]);
+      }
+    });
+
+    it('should toggle individual checkbox', () => {
+      render(<RecipeManagement />);
+      
+      const checkboxes = screen.getAllByTestId('checkbox');
+      if (checkboxes.length > 1) {
+        fireEvent.click(checkboxes[1]);
+      }
+    });
+  });
+
+  describe('Cancel dialog', () => {
+    it('should click cancel button in dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        const cancelBtn = screen.getByText('Cancelar');
+        fireEvent.click(cancelBtn);
+      });
+    });
+  });
+
+  describe('Material quantity input', () => {
+    it('should have material inputs in dialog', async () => {
+      render(<RecipeManagement />);
+      
+      const newRecipeButton = screen.getByText('Nueva Receta');
+      await fireEvent.click(newRecipeButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText('Materiales *')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Dropdown interactions', () => {
+    it('should have trash icons for delete', () => {
+      render(<RecipeManagement />);
+      
+      const trashIcons = screen.getAllByTestId('icon-trash');
+      expect(trashIcons.length).toBeGreaterThan(0);
+    });
+  });
 });

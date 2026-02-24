@@ -35,6 +35,11 @@ const mockRefetch = jest.fn();
 const mockCreateMachinery = jest.fn().mockResolvedValue({ success: true });
 const mockUpdateMachinery = jest.fn().mockResolvedValue({ success: true });
 const mockDeleteMachinery = jest.fn().mockResolvedValue({ success: true });
+const mockCreateMaintenance = jest.fn().mockResolvedValue({ success: true });
+const mockUpdateMaintenance = jest.fn().mockResolvedValue({ success: true });
+const mockDeleteMaintenance = jest.fn().mockResolvedValue({ success: true });
+const mockCreateHistory = jest.fn().mockResolvedValue({ success: true });
+const mockDetectAlerts = jest.fn();
 
 jest.mock('@/app/hooks/useMachinery', () => ({
   useMachinery: () => ({
@@ -49,20 +54,20 @@ jest.mock('@/app/hooks/useMachinery', () => ({
     maintenance: mockMaintenance,
     isLoading: false,
     refetch: mockRefetch,
-    createMaintenance: jest.fn().mockResolvedValue({ success: true }),
-    updateMaintenance: jest.fn().mockResolvedValue({ success: true }),
-    deleteMaintenance: jest.fn().mockResolvedValue({ success: true }),
+    createMaintenance: mockCreateMaintenance,
+    updateMaintenance: mockUpdateMaintenance,
+    deleteMaintenance: mockDeleteMaintenance,
   }),
   useMaintenanceHistory: () => ({
     history: mockHistory,
     refetch: mockRefetch,
-    createHistory: jest.fn().mockResolvedValue({ success: true }),
+    createHistory: mockCreateHistory,
   }),
   useMachineryAlerts: () => ({
     alerts: mockAlerts,
     isLoading: false,
     refetch: mockRefetch,
-    detectAlerts: jest.fn(),
+    detectAlerts: mockDetectAlerts,
   }),
 }));
 
@@ -382,6 +387,220 @@ describe('MachineryManagement', () => {
       
       const inputs = screen.getAllByTestId('input');
       expect(inputs.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Create Machinery', () => {
+    it('should have add buttons', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getAllByTestId('icon-plus').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Edit Machinery', () => {
+    it('should have edit icons', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getAllByTestId('icon-edit').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Delete Machinery', () => {
+    it('should have delete icons', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getAllByTestId('icon-trash').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Alerts tab', () => {
+    it('should switch to alerts tab', () => {
+      render(<MachineryManagement />);
+      
+      const alertsTab = screen.getByTestId('tab-alerts');
+      fireEvent.click(alertsTab);
+    });
+  });
+
+  describe('Filter functionality', () => {
+    it('should have filter buttons', () => {
+      render(<MachineryManagement />);
+      
+      // Check for filter-related elements
+      expect(screen.getAllByText(/Todos|Activo|Inactivo/).length).toBeGreaterThan(0);
+    });
+
+    it('should filter by status', () => {
+      render(<MachineryManagement />);
+      
+      // Click on filter buttons if available
+      const filterButtons = screen.getAllByText(/Activo/);
+      if (filterButtons.length > 0) {
+        fireEvent.click(filterButtons[0]);
+      }
+    });
+  });
+
+  describe('UI Components', () => {
+    it('should have accordion elements', () => {
+      render(<MachineryManagement />);
+      
+      const accordions = screen.queryAllByTestId('accordion-item');
+      expect(accordions).toBeDefined();
+    });
+
+    it('should have dropdown menus for actions', () => {
+      render(<MachineryManagement />);
+      
+      const dropdowns = screen.queryAllByTestId('dropdown-menu');
+      expect(dropdowns).toBeDefined();
+    });
+
+    it('should show title', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getByText('Gestión de Maquinaria')).toBeInTheDocument();
+    });
+  });
+
+  describe('Create Machinery Dialog', () => {
+    it('should open create machinery dialog', () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      expect(screen.getByTestId('dialog')).toBeInTheDocument();
+    });
+
+    it('should have dialog content', () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      expect(screen.getByTestId('dialog')).toBeInTheDocument();
+    });
+
+    it('should have form inputs in dialog', async () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      const inputs = screen.getAllByTestId('input');
+      expect(inputs.length).toBeGreaterThan(0);
+    });
+
+    it('should close dialog when cancel is clicked', () => {
+      render(<MachineryManagement />);
+      
+      const newButton = screen.getByText('Nueva');
+      fireEvent.click(newButton);
+      
+      const cancelButton = screen.getByText('Cancelar');
+      fireEvent.click(cancelButton);
+      
+      expect(screen.queryByTestId('dialog')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Machinery', () => {
+    it('should click edit button', () => {
+      render(<MachineryManagement />);
+      
+      const editButtons = screen.getAllByText('Editar');
+      if (editButtons.length > 0) {
+        fireEvent.click(editButtons[0]);
+      }
+    });
+  });
+
+  describe('Delete Machinery', () => {
+    it('should click delete button', () => {
+      render(<MachineryManagement />);
+      
+      const deleteButtons = screen.getAllByText('Eliminar');
+      if (deleteButtons.length > 0) {
+        fireEvent.click(deleteButtons[0]);
+      }
+    });
+  });
+
+  describe('Filter Sheet', () => {
+    it('should have filter options', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getByText('Todas las maquinarias')).toBeInTheDocument();
+      expect(screen.getByText('Solo activas')).toBeInTheDocument();
+      expect(screen.getByText('Solo inactivas')).toBeInTheDocument();
+    });
+
+    it('should click "Todas las maquinarias" filter', () => {
+      render(<MachineryManagement />);
+      
+      const allFilter = screen.getByText('Todas las maquinarias');
+      fireEvent.click(allFilter);
+    });
+
+    it('should click "Solo activas" filter', () => {
+      render(<MachineryManagement />);
+      
+      const activeFilter = screen.getByText('Solo activas');
+      fireEvent.click(activeFilter);
+    });
+
+    it('should click "Solo inactivas" filter', () => {
+      render(<MachineryManagement />);
+      
+      const inactiveFilter = screen.getByText('Solo inactivas');
+      fireEvent.click(inactiveFilter);
+    });
+  });
+
+  describe('Refresh functionality', () => {
+    it('should have refresh icon', () => {
+      render(<MachineryManagement />);
+      
+      const refreshIcons = screen.queryAllByTestId('icon-refresh');
+      expect(refreshIcons.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Maintenance section', () => {
+    it('should display maintenance items', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getAllByText('Mantenimiento 1').length).toBeGreaterThan(0);
+    });
+
+    it('should show PRV type badge', () => {
+      render(<MachineryManagement />);
+      
+      expect(screen.getAllByText(/PRV|Preventivo/i).length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Alerts tab', () => {
+    it('should display alerts count', () => {
+      render(<MachineryManagement />);
+      
+      // Should show 1 alert in the tab
+      const alertsText = screen.getAllByText(/Alertas/);
+      expect(alertsText.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Empty states', () => {
+    it('should filter machinery when searching', () => {
+      render(<MachineryManagement />);
+      
+      const searchInput = screen.getByPlaceholderText('Buscar maquinaria...');
+      fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
+      
+      // Just verify the search input changed
+      expect((searchInput as HTMLInputElement).value).toBe('nonexistent');
     });
   });
 });

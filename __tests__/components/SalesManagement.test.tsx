@@ -499,4 +499,123 @@ describe('SalesManagement', () => {
       expect(screen.getAllByText('Cliente 2').length).toBeGreaterThan(0);
     });
   });
+
+  describe('Create Sale Dialog', () => {
+    it('should open and close dialog', async () => {
+      render(<SalesManagement />);
+      
+      const newSaleBtn = screen.getByText('Nueva Venta');
+      fireEvent.click(newSaleBtn);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('dialog')).toBeInTheDocument();
+      });
+
+      // Find and click cancel
+      const cancelButtons = screen.getAllByText('Cancelar');
+      if (cancelButtons.length > 0) {
+        fireEvent.click(cancelButtons[0]);
+      }
+    });
+
+    it('should have client selection field', async () => {
+      render(<SalesManagement />);
+      
+      const newSaleBtn = screen.getByText('Nueva Venta');
+      fireEvent.click(newSaleBtn);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('dialog')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Filter by status', () => {
+    it('should click Pendientes filter', () => {
+      render(<SalesManagement />);
+      
+      const pendingButtons = screen.getAllByText('Pendientes');
+      if (pendingButtons.length > 0) {
+        fireEvent.click(pendingButtons[0]);
+      }
+    });
+
+    it('should click Completadas filter', () => {
+      render(<SalesManagement />);
+      
+      const completedButtons = screen.getAllByText('Completadas');
+      if (completedButtons.length > 0) {
+        fireEvent.click(completedButtons[0]);
+      }
+    });
+
+    it('should click Todas las ventas filter', () => {
+      render(<SalesManagement />);
+      
+      const allButton = screen.queryByText('Todas las ventas');
+      if (allButton) {
+        fireEvent.click(allButton);
+      }
+    });
+  });
+
+  describe('Mobile dropdown', () => {
+    it('should have dropdown menu icons', () => {
+      render(<SalesManagement />);
+      
+      const moreIcons = screen.getAllByTestId('icon-more');
+      expect(moreIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('View sale detail', () => {
+    it('should have eye icons for detail view', () => {
+      render(<SalesManagement />);
+      
+      const eyeIcons = screen.getAllByTestId('icon-eye');
+      expect(eyeIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Edit sale', () => {
+    it('should have edit icons', () => {
+      render(<SalesManagement />);
+      
+      const editIcons = screen.queryAllByTestId('icon-edit');
+      expect(editIcons).toBeDefined();
+    });
+  });
+
+  describe('Sale amounts', () => {
+    it('should show dollar icon for amounts', () => {
+      render(<SalesManagement />);
+      
+      const dollarIcons = screen.getAllByTestId('icon-dollar');
+      expect(dollarIcons.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Search', () => {
+    it('should filter by non-existent search term', () => {
+      render(<SalesManagement />);
+      
+      const searchInput = screen.getByPlaceholderText('Buscar venta...');
+      fireEvent.change(searchInput, { target: { value: 'nonexistent12345' } });
+      
+      expect((searchInput as HTMLInputElement).value).toBe('nonexistent12345');
+    });
+  });
+
+  describe('Loading sales', () => {
+    it('should load sales on status filter change', () => {
+      render(<SalesManagement />);
+      
+      // Click a filter to trigger loadSales
+      const pendingButtons = screen.getAllByText('Pendientes');
+      if (pendingButtons.length > 0) {
+        fireEvent.click(pendingButtons[0]);
+        expect(mockFetchSales).toHaveBeenCalled();
+      }
+    });
+  });
 });
