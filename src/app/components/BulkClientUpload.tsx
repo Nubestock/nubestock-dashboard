@@ -98,49 +98,32 @@ export default function BulkClientUpload({
   };
 
   const validateRow = (row: ClientRow, index: number): string[] => {
-    const errors: string[] = [];
+    const str = (v: unknown) => String(v ?? '').trim();
+    const name = str(row.name);
+    const identification = str(row.identification);
+    const email = str(row.email);
 
-    // Convertir valores a string de manera segura
-    const name = String(row.name || '').trim();
-    const identification = String(row.identification || '').trim();
-    const identificationType = String(row.identification_type || '').trim();
-    const email = String(row.email || '').trim();
-    const phone = String(row.phone || '').trim();
-    const address = String(row.address || '').trim();
-    const idProvince = String(row.id_province || '').trim();
-    const idCity = String(row.id_city || '').trim();
+    const required: string[] = [];
+    if (!name) required.push('Nombre del cliente es requerido');
+    if (!identification) required.push('RUC/Cédula es requerido');
+    if (!str(row.identification_type)) required.push('Tipo (CED/RUC) es requerido');
+    if (!email) required.push('Correo electrónico es requerido');
+    if (!str(row.phone)) required.push('Teléfono es requerido');
+    if (!str(row.address)) required.push('Dirección es requerida');
+    if (!str(row.id_province)) required.push('ID Provincia es requerido');
+    if (!str(row.id_city)) required.push('ID Ciudad es requerido');
 
-    // Validar campos requeridos
-    if (!name) errors.push('Nombre del cliente es requerido');
-    if (!identification) errors.push('RUC/Cédula es requerido');
-    if (!identificationType) errors.push('Tipo (CED/RUC) es requerido');
-    if (!email) errors.push('Correo electrónico es requerido');
-    if (!phone) errors.push('Teléfono es requerido');
-    if (!address) errors.push('Dirección es requerida');
-    if (!idProvince) errors.push('ID Provincia es requerido');
-    if (!idCity) errors.push('ID Ciudad es requerido');
+    const format: string[] = [];
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) format.push('Formato de email inválido');
+    if (identification && (identification.length < 10 || identification.length > 13)) format.push('RUC/Cédula debe tener entre 10 y 13 caracteres');
 
-    // Validar formato de email
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.push('Formato de email inválido');
-    }
-
-    // Validar RUC/Cédula
-    if (identification && (identification.length < 10 || identification.length > 13)) {
-      errors.push('RUC/Cédula debe tener entre 10 y 13 caracteres');
-    }
-
-    // Validar crédito
+    const credit: string[] = [];
     if (row.requires_credit) {
-      if (!row.credit_limit || row.credit_limit <= 0) {
-        errors.push('Límite de crédito debe ser mayor a 0');
-      }
-      if (!row.credit_days || row.credit_days <= 0) {
-        errors.push('Días de crédito debe ser mayor a 0');
-      }
+      if (row.credit_limit == null || row.credit_limit <= 0) credit.push('Límite de crédito debe ser mayor a 0');
+      if (row.credit_days == null || row.credit_days <= 0) credit.push('Días de crédito debe ser mayor a 0');
     }
 
-    return errors;
+    return [...required, ...format, ...credit];
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

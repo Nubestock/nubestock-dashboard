@@ -73,13 +73,11 @@ import { useMachinery, useMaintenance, useMaintenanceHistory, useMachineryAlerts
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-export default function MachineryManagement() {
+function useMachineryManagementState() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(true);
   const [selectedMachinery, setSelectedMachinery] = useState<any>(null);
-
-  // Dialogs
   const [isCreateMachineryOpen, setIsCreateMachineryOpen] = useState(false);
   const [isEditMachineryOpen, setIsEditMachineryOpen] = useState(false);
   const [isCreateMaintenanceOpen, setIsCreateMaintenanceOpen] = useState(false);
@@ -87,38 +85,41 @@ export default function MachineryManagement() {
   const [isCreateHistoryOpen, setIsCreateHistoryOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: number; name: string; type: 'machinery' | 'maintenance' } | null>(null);
-
-  // Forms
-  const [machineryForm, setMachineryForm] = useState({
-    name: '',
-    description: '',
-    is_active: true,
-  });
-
+  const [machineryForm, setMachineryForm] = useState({ name: '', description: '', is_active: true });
   const [maintenanceForm, setMaintenanceForm] = useState({
-    id_machinery: 0,
-    name: '',
-    type: 'PRV' as 'PRV' | 'COR',
-    next_maintainance_value: 30,
-    last_mantainance_date: '',
-    is_active: true,
+    id_machinery: 0, name: '', type: 'PRV' as 'PRV' | 'COR',
+    next_maintainance_value: 30, last_mantainance_date: '', is_active: true,
   });
-
   const [historyForm, setHistoryForm] = useState({
-    id_mantainance: 0,
-    price: 0,
-    next_mantainance_date: '',
-    images: [] as string[],
+    id_mantainance: 0, price: 0, next_mantainance_date: '', images: [] as string[],
   });
-
   const [selectedMaintenance, setSelectedMaintenance] = useState<any>(null);
-
-  // Loading states
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  return {
+    searchTerm, setSearchTerm, isFiltersOpen, setIsFiltersOpen, activeFilter, setActiveFilter,
+    selectedMachinery, setSelectedMachinery, isCreateMachineryOpen, setIsCreateMachineryOpen,
+    isEditMachineryOpen, setIsEditMachineryOpen, isCreateMaintenanceOpen, setIsCreateMaintenanceOpen,
+    isViewMaintenanceOpen, setIsViewMaintenanceOpen, isCreateHistoryOpen, setIsCreateHistoryOpen,
+    deleteConfirmOpen, setDeleteConfirmOpen, itemToDelete, setItemToDelete,
+    machineryForm, setMachineryForm, maintenanceForm, setMaintenanceForm, historyForm, setHistoryForm,
+    selectedMaintenance, setSelectedMaintenance, isCreating, setIsCreating, isUpdating, setIsUpdating, isDeleting, setIsDeleting,
+  };
+}
 
-  // Hooks
+export default function MachineryManagement() {
+  const state = useMachineryManagementState();
+  const {
+    searchTerm, setSearchTerm, isFiltersOpen, setIsFiltersOpen, activeFilter, setActiveFilter,
+    selectedMachinery, setSelectedMachinery, isCreateMachineryOpen, setIsCreateMachineryOpen,
+    isEditMachineryOpen, setIsEditMachineryOpen, isCreateMaintenanceOpen, setIsCreateMaintenanceOpen,
+    isViewMaintenanceOpen, setIsViewMaintenanceOpen, isCreateHistoryOpen, setIsCreateHistoryOpen,
+    deleteConfirmOpen, setDeleteConfirmOpen, itemToDelete, setItemToDelete,
+    machineryForm, setMachineryForm, maintenanceForm, setMaintenanceForm, historyForm, setHistoryForm,
+    selectedMaintenance, setSelectedMaintenance, isCreating, setIsCreating, isUpdating, setIsUpdating, isDeleting, setIsDeleting,
+  } = state;
+
   const { machinery, isLoading: loadingMachinery, refetch: refetchMachinery, createMachinery, updateMachinery, deleteMachinery } = useMachinery(searchTerm, activeFilter);
   const { maintenance, isLoading: loadingMaintenance, refetch: refetchMaintenance, createMaintenance, updateMaintenance, deleteMaintenance } = useMaintenance();
   const { history, refetch: refetchHistory, createHistory } = useMaintenanceHistory(selectedMaintenance?.id);

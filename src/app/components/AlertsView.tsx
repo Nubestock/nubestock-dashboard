@@ -22,6 +22,70 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
+// Helpers extraídos para reducir complejidad cognitiva (Sonar)
+function getPriorityBadge(priority: string) {
+  switch (priority) {
+    case 'critical':
+      return <Badge variant="outline" className="border-red-500 text-red-700 bg-red-50 text-xs">Crítica</Badge>;
+    case 'high':
+      return <Badge variant="outline" className="border-orange-500 text-orange-700 bg-orange-50 text-xs">Alta</Badge>;
+    case 'medium':
+      return <Badge variant="outline" className="border-yellow-500 text-yellow-700 bg-yellow-50 text-xs">Media</Badge>;
+    default:
+      return <Badge variant="outline" className="text-xs">Baja</Badge>;
+  }
+}
+
+function getStatusBadge(status: string) {
+  switch (status) {
+    case 'active':
+      return <Badge variant="outline" className="border-red-500 text-red-700 bg-red-50 text-xs">Requiere Atención</Badge>;
+    case 'acknowledged':
+      return <Badge variant="outline" className="border-blue-500 text-blue-700 bg-blue-50 text-xs">En Revisión</Badge>;
+    case 'resolved':
+      return <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50 text-xs">Resuelta</Badge>;
+    default:
+      return <Badge variant="outline" className="text-xs">{status}</Badge>;
+  }
+}
+
+function extractProductInfo(alert: { alert_message?: string }) {
+  const msg = alert.alert_message ?? '';
+  const nameMatch = msg.match(/"([^"]+)"/);
+  const productName = nameMatch ? nameMatch[1] : 'Producto';
+  const skuMatch = msg.match(/SKU:\s*([^\)]+)/);
+  const sku = skuMatch ? skuMatch[1] : 'N/A';
+  const stockMatch = msg.match(/Stock actual:\s*(\d+)/);
+  const currentStock = stockMatch ? Number.parseInt(stockMatch[1]) : 0;
+  const minMatch = msg.match(/Mínimo requerido:\s*(\d+)/);
+  const minRequired = minMatch ? Number.parseInt(minMatch[1]) : 0;
+  return { productName, sku, currentStock, minRequired, deficit: minRequired - currentStock };
+}
+
+function formatAlertDate(dateString: string) {
+  const date = new Date(dateString);
+  const diffInDays = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffInDays === 0) return 'Hoy';
+  if (diffInDays === 1) return 'Ayer';
+  if (diffInDays < 7) return `Hace ${diffInDays} días`;
+  if (diffInDays < 30) return `Hace ${Math.floor(diffInDays / 7)} semanas`;
+  return date.toLocaleDateString('es-EC', { month: 'short', day: 'numeric' });
+}
+
+function filterAlertsBySearchAndPriority(
+  alertsList: { alert_title?: string; alert_message?: string; priority?: string }[],
+  searchTerm: string,
+  priorityFilter: string
+) {
+  return alertsList.filter(alert => {
+    const matchesSearch = searchTerm === '' ||
+      (alert.alert_title ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (alert.alert_message ?? '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPriority = priorityFilter === 'all' || alert.priority === priorityFilter;
+    return matchesSearch && matchesPriority;
+  });
+}
+
 interface AlertsViewProps {
   onViewProduct?: (productId: string) => void;
 }
@@ -31,34 +95,8 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  
+
   const { alerts, isLoading, error, refetch } = useAlerts(showActiveOnly);
-
-  const getPriorityBadge = (priority: string) => {
-    switch (priority) {
-      case 'critical':
-        return <Badge variant="outline" className="border-red-500 text-red-700 bg-red-50 text-xs">Crítica</Badge>;
-      case 'high':
-        return <Badge variant="outline" className="border-orange-500 text-orange-700 bg-orange-50 text-xs">Alta</Badge>;
-      case 'medium':
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-700 bg-yellow-50 text-xs">Media</Badge>;
-      default:
-        return <Badge variant="outline" className="text-xs">Baja</Badge>;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge variant="outline" className="border-red-500 text-red-700 bg-red-50 text-xs">Requiere Atención</Badge>;
-      case 'acknowledged':
-        return <Badge variant="outline" className="border-blue-500 text-blue-700 bg-blue-50 text-xs">En Revisión</Badge>;
-      case 'resolved':
-        return <Badge variant="outline" className="border-green-500 text-green-700 bg-green-50 text-xs">Resuelta</Badge>;
-      default:
-        return <Badge variant="outline" className="text-xs">{status}</Badge>;
-    }
-  };
 
   const handleAcknowledge = (alertId: string) => {
     toast.success('Alerta marcada como en revisión');
@@ -72,72 +110,23 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
 
   const handleViewProduct = (productId: string) => {
     toast.info('Abriendo detalles del producto...');
-    if (onViewProduct) {
-      onViewProduct(productId);
-    }
+    onViewProduct?.(productId);
   };
 
   const handleCreateOrder = () => {
     toast.info('Generando orden de producción...');
   };
 
-  // Agrupar alertas por tipo
   const stockAlerts = alerts.filter(a => a.alert_type === 'stock_low' || a.alert_type === 'stock_critical');
   const maintenanceAlerts = alerts.filter(a => a.alert_type === 'maintenance');
   const paymentAlerts = alerts.filter(a => a.alert_type === 'payment');
   const productionAlerts = alerts.filter(a => a.alert_type === 'production');
-
-  // Estadísticas
   const activeAlerts = alerts.filter(a => a.status === 'active');
   const acknowledgedAlerts = alerts.filter(a => a.status === 'acknowledged');
   const criticalCount = alerts.filter(a => a.priority === 'critical' || a.priority === 'high').length;
 
-  // Extraer información del producto del mensaje
-  const extractProductInfo = (alert: any) => {
-    const nameMatch = alert.alert_message.match(/"([^"]+)"/);
-    const productName = nameMatch ? nameMatch[1] : 'Producto';
-    
-    const skuMatch = alert.alert_message.match(/SKU:\s*([^\)]+)/);
-    const sku = skuMatch ? skuMatch[1] : 'N/A';
-    
-    const stockMatch = alert.alert_message.match(/Stock actual:\s*(\d+)/);
-    const currentStock = stockMatch ? Number.parseInt(stockMatch[1]) : 0;
-    
-    const minMatch = alert.alert_message.match(/Mínimo requerido:\s*(\d+)/);
-    const minRequired = minMatch ? Number.parseInt(minMatch[1]) : 0;
-    
-    const deficit = minRequired - currentStock;
-    
-    return { productName, sku, currentStock, minRequired, deficit };
-  };
-
-  // Formatear fecha relativa
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInDays === 0) return 'Hoy';
-    if (diffInDays === 1) return 'Ayer';
-    if (diffInDays < 7) return `Hace ${diffInDays} días`;
-    if (diffInDays < 30) return `Hace ${Math.floor(diffInDays / 7)} semanas`;
-    return date.toLocaleDateString('es-EC', { month: 'short', day: 'numeric' });
-  };
-
-  // Filtrar alertas por búsqueda y prioridad
-  const filteredAlerts = (alertsList: any[]) => {
-    return alertsList.filter(alert => {
-      const matchesSearch = searchTerm === '' || 
-        alert.alert_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        alert.alert_message.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesPriority = priorityFilter === 'all' || alert.priority === priorityFilter;
-      
-      return matchesSearch && matchesPriority;
-    });
-  };
-
+  const filteredAlerts = (alertsList: any[]) =>
+    filterAlertsBySearchAndPriority(alertsList, searchTerm, priorityFilter);
   const hasActiveFilters = priorityFilter !== 'all';
 
   return (
@@ -473,7 +462,7 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
                                 {/* Estado y Fecha */}
                                 <div className="flex items-center justify-between">
                                   {getStatusBadge(alert.status)}
-                                  <span className="text-xs text-neutral-500">{formatDate(alert.creationdate)}</span>
+                                  <span className="text-xs text-neutral-500">{formatAlertDate(alert.creationdate)}</span>
                                 </div>
                               </div>
 
@@ -593,7 +582,7 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
                                 </td>
                                 <td className="px-4 py-3">
                                   <span className="text-sm text-neutral-600">
-                                    {formatDate(alert.creationdate)}
+                                    {formatAlertDate(alert.creationdate)}
                                   </span>
                                 </td>
                                 <td className="px-4 py-3">
@@ -703,7 +692,7 @@ export default function AlertsView({ onViewProduct }: AlertsViewProps) {
                             {getStatusBadge(alert.status)}
                           </div>
                           <p className="text-sm text-neutral-600 mb-2">{alert.alert_message}</p>
-                          <span className="text-xs text-neutral-500">{formatDate(alert.creationdate)}</span>
+                          <span className="text-xs text-neutral-500">{formatAlertDate(alert.creationdate)}</span>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

@@ -114,25 +114,20 @@ export default function LocationsManagement() {
 
   // ============= HANDLERS =============
 
+  const resetFormByTab = () => {
+    if (activeTab === 'countries') setCountryForm({ name: '', is_code: '', is_active: true });
+    else if (activeTab === 'provinces') setProvinceForm({ name: '', is_code: '', id_country: 0, is_active: true });
+    else setCityForm({ name: '', is_code: '', id_province: 0, is_active: true });
+  };
+
   const handleOpenDialog = (item?: Country | Province | City) => {
+    setEditingItem(item ?? null);
     if (item) {
-      setEditingItem(item);
-      if (activeTab === 'countries') {
-        setCountryForm(item as Country);
-      } else if (activeTab === 'provinces') {
-        setProvinceForm(item as Province);
-      } else {
-        setCityForm(item as City);
-      }
+      if (activeTab === 'countries') setCountryForm(item as Country);
+      else if (activeTab === 'provinces') setProvinceForm(item as Province);
+      else setCityForm(item as City);
     } else {
-      setEditingItem(null);
-      if (activeTab === 'countries') {
-        setCountryForm({ name: '', is_code: '', is_active: true });
-      } else if (activeTab === 'provinces') {
-        setProvinceForm({ name: '', is_code: '', id_country: 0, is_active: true });
-      } else {
-        setCityForm({ name: '', is_code: '', id_province: 0, is_active: true });
-      }
+      resetFormByTab();
     }
     setIsDialogOpen(true);
   };
@@ -142,48 +137,53 @@ export default function LocationsManagement() {
     setEditingItem(null);
   };
 
+  const submitCountry = async () => {
+    if (!countryForm.name || !countryForm.is_code) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
+    if (editingItem) {
+      await updateCountry(editingItem.id, countryForm);
+      toast.success('País actualizado correctamente');
+    } else {
+      await createCountry(countryForm);
+      toast.success('País creado correctamente');
+    }
+  };
+
+  const submitProvince = async () => {
+    if (!provinceForm.name || !provinceForm.id_country) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
+    if (editingItem) {
+      await updateProvince(editingItem.id, provinceForm);
+      toast.success('Provincia actualizada correctamente');
+    } else {
+      await createProvince(provinceForm);
+      toast.success('Provincia creada correctamente');
+    }
+  };
+
+  const submitCity = async () => {
+    if (!cityForm.name || !cityForm.id_province) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
+    if (editingItem) {
+      await updateCity(editingItem.id, cityForm);
+      toast.success('Ciudad actualizada correctamente');
+    } else {
+      await createCity(cityForm);
+      toast.success('Ciudad creada correctamente');
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      if (activeTab === 'countries') {
-        if (!countryForm.name || !countryForm.is_code) {
-          toast.error('Por favor completa todos los campos requeridos');
-          return;
-        }
-
-        if (editingItem) {
-          await updateCountry(editingItem.id, countryForm);
-          toast.success('País actualizado correctamente');
-        } else {
-          await createCountry(countryForm);
-          toast.success('País creado correctamente');
-        }
-      } else if (activeTab === 'provinces') {
-        if (!provinceForm.name || !provinceForm.id_country) {
-          toast.error('Por favor completa todos los campos requeridos');
-          return;
-        }
-
-        if (editingItem) {
-          await updateProvince(editingItem.id, provinceForm);
-          toast.success('Provincia actualizada correctamente');
-        } else {
-          await createProvince(provinceForm);
-          toast.success('Provincia creada correctamente');
-        }
-      } else {
-        if (!cityForm.name || !cityForm.id_province) {
-          toast.error('Por favor completa todos los campos requeridos');
-          return;
-        }
-
-        if (editingItem) {
-          await updateCity(editingItem.id, cityForm);
-          toast.success('Ciudad actualizada correctamente');
-        } else {
-          await createCity(cityForm);
-          toast.success('Ciudad creada correctamente');
-        }
-      }
+      if (activeTab === 'countries') await submitCountry();
+      else if (activeTab === 'provinces') await submitProvince();
+      else await submitCity();
       handleCloseDialog();
     } catch (error: any) {
       toast.error(error.message || 'Error al guardar');
