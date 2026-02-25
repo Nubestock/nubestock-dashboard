@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import SalesManagement from '@/app/components/SalesManagement';
 
 // Mock toast
@@ -22,6 +22,8 @@ const mockSales = [
     id_client: 1,
     client_name: 'Cliente Test',
     client_identification: '123456789',
+    identification: '123456789',
+    dispatch_guide: 'GUIA-001',
     total_amount: 500.00,
     method: 'cash',
     status: 'pending',
@@ -36,6 +38,8 @@ const mockSales = [
     id_client: 2,
     client_name: 'Cliente 2',
     client_identification: '987654321',
+    identification: '987654321',
+    dispatch_guide: null,
     total_amount: 300.00,
     method: 'credit',
     status: 'completed',
@@ -44,6 +48,9 @@ const mockSales = [
     products: []
   },
 ];
+
+let mockSalesData: typeof mockSales = [];
+let mockLoading = false;
 
 const mockClients = [
   { id: 1, name: 'Cliente Test', identification: '123456789', email: 'test@test.com' },
@@ -60,11 +67,11 @@ const mockCreateSale = jest.fn().mockResolvedValue({ success: true });
 
 jest.mock('@/app/hooks/useSales', () => ({
   useSales: () => ({
-    sales: mockSales,
-    isLoading: false,
+    get sales() { return mockSalesData; },
+    get isLoading() { return mockLoading; },
     fetchSales: mockFetchSales,
     createSale: mockCreateSale,
-    pagination: { total: 2, page: 1, totalPages: 1 },
+    pagination: { total: mockSalesData.length, page: 1, totalPages: 1 },
   }),
 }));
 
@@ -195,6 +202,149 @@ jest.mock('@/app/components/ui/dropdown-menu', () => ({
 describe('SalesManagement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSalesData = [...mockSales];
+    mockLoading = false;
+  });
+
+  describe('Loading state', () => {
+    it('should show loading spinner and message when isLoading is true', () => {
+      mockLoading = true;
+      render(<SalesManagement />);
+      expect(screen.getByText('Cargando ventas...')).toBeInTheDocument();
+      expect(screen.queryByText('Cliente Test')).not.toBeInTheDocument();
+    });
+
+    it('should not show sales list while loading', () => {
+      mockLoading = true;
+      render(<SalesManagement />);
+      expect(screen.getByPlaceholderText('Buscar venta...')).toBeInTheDocument();
+      expect(screen.queryAllByText('Cliente Test')).toHaveLength(0);
+    });
+  });
+
+  describe('Empty state', () => {
+    it('should show empty state when there are no sales', () => {
+      mockSalesData = [];
+      render(<SalesManagement />);
+      expect(screen.getByText('No hay ventas registradas')).toBeInTheDocument();
+      expect(screen.getByText('Crea tu primera venta usando el botón "Nueva Venta"')).toBeInTheDocument();
+    });
+
+    it('should show filter message and Limpiar filtros when filters yield no results', () => {
+      mockSalesData = [];
+      render(<SalesManagement />);
+      fireEvent.change(screen.getByPlaceholderText('Buscar venta...'), { target: { value: 'NoExiste' } });
+      expect(screen.getByText('No hay ventas registradas')).toBeInTheDocument();
+      expect(screen.getByText('No se encontraron ventas con los filtros aplicados')).toBeInTheDocument();
+      const clearBtn = screen.getByRole('button', { name: /Limpiar filtros/i });
+      expect(clearBtn).toBeInTheDocument();
+    });
+
+    it('should clear filters when clicking Limpiar filtros', () => {
+      mockSalesData = [];
+      render(<SalesManagement />);
+      fireEvent.change(screen.getByPlaceholderText('Buscar venta...'), { target: { value: 'x' } });
+      expect(screen.getByText('Limpiar filtros')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: /Limpiar filtros/i }));
+      expect(screen.getByText('No hay ventas registradas')).toBeInTheDocument();
+    });
+  });
+
+  describe('handleCreateSale validation and submit', () => {
+    it('should show error when creating sale without client', async () => {
+      render(<SalesManagement />);
+      fireEvent.click(screen.getByRole('button', { name: /Nueva Venta/i }));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dateInput = screen.getByTestId('dialog').querySelector('input[type="date"]');
+      if (dateInput) fireEvent.change(dateInput, { target: { value: '2025-12-31' } });
+      fireEvent.click(screen.getByRole('button', { name: /Crear Venta/i }));
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Selecciona un cliente');
+      });
+    });
+
+    it('should show error when creating sale without products', async () => {
+      render(<SalesManagement />);
+      fireEvent.click(screen.getByRole('button', { name: /Nueva Venta/i }));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dialog = within(screen.getByTestId('dialog'));
+      fireEvent.focus(dialog.getByPlaceholderText('Buscar cliente...'));
+      fireEvent.mouseDown(dialog.getByText('Cliente Test'));
+      await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Cliente seleccionado: Cliente Test'));
+      const dateInput = screen.getByTestId('dialog').querySelector('input[type="date"]');
+      if (dateInput) fireEvent.change(dateInput, { target: { value: '2025-12-31' } });
+      fireEvent.click(screen.getByRole('button', { name: /Crear Venta/i }));
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Agrega al menos un producto');
+      });
+    });
+
+    it('should show error when creating sale without due date', async () => {
+      render(<SalesManagement />);
+      fireEvent.click(screen.getByRole('button', { name: /Nueva Venta/i }));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dialog = within(screen.getByTestId('dialog'));
+      fireEvent.focus(dialog.getByPlaceholderText('Buscar cliente...'));
+      fireEvent.mouseDown(dialog.getByText('Cliente Test'));
+      await waitFor(() => expect(mockToastSuccess).toHaveBeenCalled());
+      fireEvent.change(dialog.getByPlaceholderText('Buscar producto...'), { target: { value: 'A' } });
+      fireEvent.mouseDown(dialog.getByText('Producto A'));
+      const numberInput = Array.from(screen.getByTestId('dialog').querySelectorAll('input')).find((el: Element) => (el as HTMLInputElement).type === 'number' && (el as HTMLInputElement).placeholder === '0');
+      if (numberInput) fireEvent.change(numberInput, { target: { value: '2' } });
+      fireEvent.click(screen.getByRole('button', { name: /Agregar/i }));
+      await waitFor(() => expect(mockToastSuccess).toHaveBeenCalled());
+      fireEvent.click(screen.getByRole('button', { name: /Crear Venta/i }));
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Selecciona una fecha de vencimiento');
+      });
+    });
+
+    it('should show error toast when createSale fails', async () => {
+      mockCreateSale.mockRejectedValueOnce(new Error('Error al crear venta'));
+      render(<SalesManagement />);
+      fireEvent.click(screen.getByRole('button', { name: /Nueva Venta/i }));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dialog = within(screen.getByTestId('dialog'));
+      fireEvent.focus(dialog.getByPlaceholderText('Buscar cliente...'));
+      fireEvent.mouseDown(dialog.getByText('Cliente Test'));
+      await waitFor(() => expect(mockToastSuccess).toHaveBeenCalled());
+      const dateInput = screen.getByTestId('dialog').querySelector('input[type="date"]');
+      if (dateInput) fireEvent.change(dateInput, { target: { value: '2025-12-31' } });
+      fireEvent.change(dialog.getByPlaceholderText('Buscar producto...'), { target: { value: 'A' } });
+      fireEvent.mouseDown(dialog.getByText('Producto A'));
+      const numberInput = Array.from(screen.getByTestId('dialog').querySelectorAll('input')).find((el: Element) => (el as HTMLInputElement).type === 'number' && (el as HTMLInputElement).placeholder === '0');
+      if (numberInput) fireEvent.change(numberInput, { target: { value: '1' } });
+      fireEvent.click(screen.getByRole('button', { name: /Agregar/i }));
+      await waitFor(() => expect(mockToastSuccess).toHaveBeenCalled());
+      fireEvent.click(screen.getByRole('button', { name: /Crear Venta/i }));
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Error al crear venta');
+      });
+    });
+  });
+
+  describe('handleAddProduct validation', () => {
+    it('should show error when adding product without selection or quantity', async () => {
+      render(<SalesManagement />);
+      fireEvent.click(screen.getByText('Nueva Venta'));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      fireEvent.click(screen.getByRole('button', { name: /Agregar/i }));
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Selecciona un producto y una cantidad válida');
+      });
+    });
+  });
+
+  describe('loadSales error', () => {
+    it('should show error toast when fetchSales fails on filter change', async () => {
+      mockFetchSales.mockRejectedValueOnce(new Error('Network error'));
+      render(<SalesManagement />);
+      const pendientesButtons = screen.getAllByRole('button', { name: /Pendientes/i });
+      fireEvent.click(pendientesButtons[0]);
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Error al cargar ventas');
+      });
+    });
   });
 
   describe('Initial rendering', () => {
