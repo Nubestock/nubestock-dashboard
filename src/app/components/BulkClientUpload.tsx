@@ -32,6 +32,15 @@ interface ClientRow {
   credit_days?: number | null;
 }
 
+/** Validación de email sin regex para evitar ReDoS (Security Hotspot Sonar). */
+function isValidEmail(email: string): boolean {
+  const at = email.indexOf('@');
+  if (at <= 0 || at !== email.lastIndexOf('@')) return false;
+  const afterAt = email.slice(at + 1);
+  const dot = afterAt.indexOf('.');
+  return dot > 0 && dot < afterAt.length - 1 && afterAt.length <= 254;
+}
+
 const TEMPLATE_COLUMNS = [
   { key: 'name', label: 'Nombre del Cliente', required: true, example: 'Juan Pérez Distribuciones' },
   { key: 'identification', label: 'RUC/Cédula', required: true, example: '1234567890001' },
@@ -114,7 +123,7 @@ export default function BulkClientUpload({
     if (!str(row.id_city)) required.push('ID Ciudad es requerido');
 
     const format: string[] = [];
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) format.push('Formato de email inválido');
+    if (email && !isValidEmail(email)) format.push('Formato de email inválido');
     if (identification && (identification.length < 10 || identification.length > 13)) format.push('RUC/Cédula debe tener entre 10 y 13 caracteres');
 
     const credit: string[] = [];

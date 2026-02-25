@@ -167,7 +167,7 @@ export default function RecipeManagement() {
     const newRow: RecipeMaterialRow = {
       id_product: 0,
       quantity: 0,
-      tempId: `temp-${Date.now()}-${Math.random()}`,
+      tempId: `temp-${crypto.randomUUID()}`,
     };
     setRecipeMaterials([...recipeMaterials, newRow]);
   };
