@@ -1,85 +1,217 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="40" failures="0" errors="0" time="1.478">
-  <testsuite name="ClientManagement" errors="0" failures="0" skipped="0" timestamp="2026-02-25T14:06:41" time="1.099" tests="40">
-    <testcase classname="ClientManagement › Loading state" name="should show loading spinner and message when isLoading is true" time="0.023">
+<testsuites name="jest tests" tests="106" failures="0" errors="0" time="1.558">
+  <testsuite name="UserManagement" errors="0" failures="0" skipped="0" timestamp="2026-02-25T14:15:30" time="0.985" tests="106">
+    <testcase classname="UserManagement › Loading state" name="should show loading spinner and message when isLoading is true" time="0.025">
     </testcase>
-    <testcase classname="ClientManagement › Loading state" name="should not show client list while loading" time="0.005">
+    <testcase classname="UserManagement › Loading state" name="should not show user list while loading" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Error state" name="should show error message when error is set" time="0.045">
+    <testcase classname="UserManagement › Error state" name="should show error message when error is set" time="0.002">
     </testcase>
-    <testcase classname="ClientManagement › Error state" name="should show error and not show loading when error is set and not loading" time="0.013">
+    <testcase classname="UserManagement › Error state" name="should show error in Alert and keep header visible" time="0.002">
     </testcase>
-    <testcase classname="ClientManagement › Empty state" name="should show empty state when there are no clients" time="0.006">
+    <testcase classname="UserManagement › Empty state" name="should show empty state when there are no users" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Empty state" name="should show filter-adjusted message and Limpiar filtros when search has no results" time="0.047">
+    <testcase classname="UserManagement › Empty state" name="should show filter-adjusted message when search has no results" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Empty state" name="should show all clients again after clicking Limpiar filtros in empty filtered state" time="0.036">
+    <testcase classname="UserManagement › Initial rendering" name="should render the component with title" time="0.04">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render the header" time="0.011">
+    <testcase classname="UserManagement › Initial rendering" name="should render page subtitle" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render the search input" time="0.009">
+    <testcase classname="UserManagement › Initial rendering" name="should render search input" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render statistics cards" time="0.015">
+    <testcase classname="UserManagement › User display" name="should display user names" time="0.014">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render correct statistics values" time="0.017">
+    <testcase classname="UserManagement › User display" name="should display user emails" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render client list" time="0.012">
+    <testcase classname="UserManagement › Status badges" name="should display active badge" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render client email and phone" time="0.013">
+    <testcase classname="UserManagement › Status badges" name="should display inactive badge" time="0.012">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render credit days badge for clients with credit" time="0.008">
+    <testcase classname="UserManagement › Tabs" name="should render tabs component" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render cash badge for clients without credit" time="0.007">
+    <testcase classname="UserManagement › Tabs" name="should have users tab" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should render inactive badge for inactive clients" time="0.01">
+    <testcase classname="UserManagement › Tabs" name="should have roles tab" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should show results count (Mostrando X de Y clientes)" time="0.006">
+    <testcase classname="UserManagement › Icons" name="should render plus icon" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Rendering" name="should show filtered results count when search is applied" time="0.01">
+    <testcase classname="UserManagement › Icons" name="should render search icon" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Search functionality" name="should filter clients by name" time="0.01">
+    <testcase classname="UserManagement › Icons" name="should render users icon" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Search functionality" name="should filter clients by identification" time="0.009">
+    <testcase classname="UserManagement › Icons" name="should render usercheck icon" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Search functionality" name="should filter clients by email" time="0.01">
+    <testcase classname="UserManagement › Icons" name="should render userx icon" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Add client dialog" name="should open add client form when button is clicked" time="0.046">
+    <testcase classname="UserManagement › Icons" name="should render shield icon" time="0.004">
     </testcase>
-    <testcase classname="ClientManagement › Add client dialog" name="should close add client form when Close is clicked" time="0.053">
+    <testcase classname="UserManagement › Search functionality" name="should filter users when typing" time="0.012">
     </testcase>
-    <testcase classname="ClientManagement › Export functionality" name="should export clients to Excel when button is clicked" time="0.065">
+    <testcase classname="UserManagement › Card components" name="should render multiple cards" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Export functionality" name="should show error toast when export fails" time="0.061">
+    <testcase classname="UserManagement › Badge components" name="should render badges" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Export functionality" name="should export only filtered clients and show correct count in toast" time="0.063">
+    <testcase classname="UserManagement › Statistics" name="should display total count" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should render filter button" time="0.012">
+    <testcase classname="UserManagement › Statistics" name="should display correct statistics (Total 2, Activos 1, Inactivos 1)" time="0.014">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should render filter options in sheet" time="0.012">
+    <testcase classname="UserManagement › Statistics" name="should show results count (Mostrando X de Y usuarios)" time="0.007">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should filter by credit type when Solo con Crédito is clicked" time="0.013">
+    <testcase classname="UserManagement › Input components" name="should have input elements" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should filter by cash type when Solo al Contado is clicked" time="0.009">
+    <testcase classname="UserManagement › Role display" name="should display role badges" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should clear filters when Limpiar button is clicked" time="0.015">
+    <testcase classname="UserManagement › Create User Dialog" name="should have plus icons for new user" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Filter functionality" name="should filter by province" time="0.01">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have more vertical icons" time="0.004">
     </testcase>
-    <testcase classname="ClientManagement › Bulk upload" name="should render bulk upload button" time="0.008">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have edit buttons in dropdown" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Bulk upload" name="should open bulk upload dialog when button is clicked" time="0.008">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have delete buttons in dropdown" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Format functions" name="should format credit limit correctly" time="0.008">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have roles related buttons" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Toggle active functionality" name="should toggle client active status via switch" time="0.005">
+    <testcase classname="UserManagement › Filter Sheet" name="should have user filter options" time="0.006">
     </testcase>
-    <testcase classname="ClientManagement › Toggle active functionality" name="should toggle client active status via dropdown menu" time="0.006">
+    <testcase classname="UserManagement › Filter Sheet" name="should have &quot;Todos&quot; text in filter options" time="0.004">
     </testcase>
-    <testcase classname="ClientManagement › Filter panel interactions" name="should reset province filter when clicking &quot;Todas las provincias&quot;" time="0.015">
+    <testcase classname="UserManagement › Filter Sheet" name="should click Activos filter" time="0.008">
     </testcase>
-    <testcase classname="ClientManagement › Filter panel interactions" name="should reset credit filter when clicking &quot;Todos&quot;" time="0.014">
+    <testcase classname="UserManagement › Filter Sheet" name="should click Inactivos filter" time="0.005">
     </testcase>
-    <testcase classname="ClientManagement › Filter panel interactions" name="should close filter panel when clicking &quot;Aplicar&quot;" time="0.006">
+    <testcase classname="UserManagement › Edit User" name="should click edit button" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Delete User" name="should click delete button" time="0.01">
+    </testcase>
+    <testcase classname="UserManagement › User Roles" name="should have roles tab" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Tabs switching" name="should click users tab" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › Tabs switching" name="should click roles tab" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Refresh functionality" name="should have refresh icon" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Empty search results" name="should handle empty search" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › Phone display" name="should display phone icon" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Password reset" name="should have password reset button in dropdown" time="0.009">
+    </testcase>
+    <testcase classname="UserManagement › Password reset" name="should click password reset button" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › User creation form" name="should have inputs for user data" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Role badges" name="should display role name in badge" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Email display" name="should display mail icon" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › User count statistics" name="should display user statistics" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Active/Inactive counts" name="should show active users count label" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Active/Inactive counts" name="should show inactive users count label" time="0.009">
+    </testcase>
+    <testcase classname="UserManagement › Dropdown menu" name="should have more vertical icons" time="0.003">
+    </testcase>
+    <testcase classname="UserManagement › Key icon" name="should display key icon" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Edit user dialog" name="should open dialog when clicking edit" time="0.011">
+    </testcase>
+    <testcase classname="UserManagement › Delete user confirmation" name="should open alert dialog when clicking delete" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Checkbox for permissions" name="should have checkbox elements" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Calendar icon" name="should have date related icons" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Add User Form" name="should have nuevo usuario button" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › Add User Form" name="should have inputs in user form" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Edit User Form" name="should open edit form when clicking edit" time="0.009">
+    </testcase>
+    <testcase classname="UserManagement › Delete User" name="should show delete confirmation dialog" time="0.01">
+    </testcase>
+    <testcase classname="UserManagement › Delete User" name="should have cancel option in delete dialog" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Assign Role" name="should have roles button in dropdown" time="0.003">
+    </testcase>
+    <testcase classname="UserManagement › Reset Password" name="should have reset password option" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › Reset Password" name="should click reset password" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › Refresh Users" name="should have refresh functionality" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Filter users" name="should filter active users" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Filter users" name="should filter inactive users" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › User roles display" name="should display user roles" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › User details" name="should display user email" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › User details" name="should display user status" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › Tabs navigation" name="should have users and roles tabs" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Tabs navigation" name="should switch to roles tab" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Roles management" name="should click roles tab" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should have create user dialog" time="0.009">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should have name input in create form" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should have email input in create form" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should have password input in create form" time="0.009">
+    </testcase>
+    <testcase classname="UserManagement › Edit User Form" name="should open edit dialog" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Edit User Form" name="should have save button in edit form" time="0.011">
+    </testcase>
+    <testcase classname="UserManagement › Delete User Confirmation" name="should open delete confirmation" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Delete User Confirmation" name="should have confirm button in delete dialog" time="0.011">
+    </testcase>
+    <testcase classname="UserManagement › User Status Toggle" name="should display active status" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › User Status Toggle" name="should display inactive status" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Search Users" name="should have search input" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Search Users" name="should filter users on search" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Pagination" name="should display total users" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › User Phone Display" name="should display user phone number" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Role Badge Display" name="should display role badges" time="0.003">
+    </testcase>
+    <testcase classname="UserManagement › Dropdown Menu Actions" name="should have action buttons" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › Filter Sheet" name="should have filter icon" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › User Stats Cards" name="should display user statistics" time="0.003">
+    </testcase>
+    <testcase classname="UserManagement › Role Assignment" name="should have assign role option" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › User Email Display" name="should show mail icons" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › User Actions" name="should have users icon" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Refresh Users Button" name="should have refresh icon" time="0.004">
+    </testcase>
+    <testcase classname="UserManagement › Refresh Users Button" name="should click refresh button" time="0.034">
+    </testcase>
+    <testcase classname="UserManagement › User Name Display" name="should display user names" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Create Role Dialog" name="should switch to roles tab and see plus icon" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › Permission Display" name="should have checkbox components" time="0.007">
+    </testcase>
+    <testcase classname="UserManagement › Dialog Behavior" name="should close dialog on cancel" time="0.01">
+    </testcase>
+    <testcase classname="UserManagement › Loading State" name="should not show loading when data loaded" time="0.004">
     </testcase>
   </testsuite>
 </testsuites>

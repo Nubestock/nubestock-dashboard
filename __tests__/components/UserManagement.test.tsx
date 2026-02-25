@@ -22,19 +22,30 @@ jest.mock('@/app/contexts/AuthContext', () => ({
 
 // Mock data
 const mockUsers = [
-  { id: 1, name: 'Usuario 1', email: 'user1@test.com', phone: '123456789', is_active: true, roles: ['Admin'] },
-  { id: 2, name: 'Usuario 2', email: 'user2@test.com', phone: '987654321', is_active: false, roles: ['User'] },
+  { id: 1, name: 'Usuario 1', email: 'user1@test.com', phone: '123456789', is_active: true, roles: ['Admin'], last_login: '2024-01-15T10:00:00Z' },
+  { id: 2, name: 'Usuario 2', email: 'user2@test.com', phone: '987654321', is_active: false, roles: ['User'], last_login: null },
 ];
 
 const mockRoles = [
-  { id: 1, name: 'Administrador', description: 'Admin role' },
-  { id: 2, name: 'Usuario', description: 'User role' },
+  { id: 1, name: 'Administrador', description: 'Admin role', permissions: [{ id: 1 }] },
+  { id: 2, name: 'Usuario', description: 'User role', permissions: [] },
 ];
 
 const mockPermissions = [
   { id: 1, name: 'users:read', description: 'Read users', category: 'users' },
   { id: 2, name: 'users:write', description: 'Write users', category: 'users' },
 ];
+
+const mockRolesData = {
+  roles: mockRoles,
+  allPermissions: mockPermissions,
+};
+
+// Estado mutable para probar loading, error y lista vacía
+let mockUsersData: typeof mockUsers = [];
+let mockLoading = false;
+let mockError: string | null = null;
+let mockPagination = { total: 2, totalPages: 1 };
 
 const mockRefetch = jest.fn();
 const mockCreateUser = jest.fn().mockResolvedValue({ success: true });
@@ -45,9 +56,10 @@ const mockAssignRole = jest.fn().mockResolvedValue({ success: true });
 
 jest.mock('@/app/hooks/useUsers', () => ({
   useUsers: () => ({
-    users: mockUsers,
-    pagination: { total: 2, totalPages: 1 },
-    isLoading: false,
+    get users() { return mockUsersData; },
+    get pagination() { return mockPagination; },
+    get isLoading() { return mockLoading; },
+    get error() { return mockError; },
     refetch: mockRefetch,
     createUser: mockCreateUser,
     updateUser: mockUpdateUser,
@@ -62,8 +74,7 @@ jest.mock('@/app/hooks/useUsers', () => ({
     isLoading: false,
   }),
   useRolesWithPermissions: () => ({
-    roles: mockRoles,
-    permissions: mockPermissions,
+    rolesData: mockRolesData,
     isLoading: false,
     refetch: mockRefetch,
     createRole: jest.fn().mockResolvedValue({ success: true }),
@@ -209,6 +220,68 @@ jest.mock('@/app/components/ui/alert', () => ({
 describe('UserManagement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUsersData = [...mockUsers];
+    mockLoading = false;
+    mockError = null;
+    mockPagination = { total: 2, totalPages: 1 };
+  });
+
+  describe('Loading state', () => {
+    it('should show loading spinner and message when isLoading is true', () => {
+      mockLoading = true;
+      render(<UserManagement />);
+
+      expect(screen.getByText('Cargando usuarios...')).toBeInTheDocument();
+      expect(screen.queryByText('Usuario 1')).not.toBeInTheDocument();
+    });
+
+    it('should not show user list while loading', () => {
+      mockLoading = true;
+      render(<UserManagement />);
+
+      expect(screen.getByPlaceholderText('Buscar usuario...')).toBeInTheDocument();
+      expect(screen.getByText('Total')).toBeInTheDocument();
+      expect(screen.queryAllByText('Usuario 1')).toHaveLength(0);
+    });
+  });
+
+  describe('Error state', () => {
+    it('should show error message when error is set', () => {
+      mockError = 'Error de conexión con el servidor';
+      render(<UserManagement />);
+
+      expect(screen.getByText('Error de conexión con el servidor')).toBeInTheDocument();
+    });
+
+    it('should show error in Alert and keep header visible', () => {
+      mockError = 'Fallo al cargar usuarios';
+      render(<UserManagement />);
+
+      expect(screen.getByText('Gestión de Usuarios')).toBeInTheDocument();
+      expect(screen.getByText('Fallo al cargar usuarios')).toBeInTheDocument();
+      expect(screen.getByTestId('alert')).toBeInTheDocument();
+    });
+  });
+
+  describe('Empty state', () => {
+    it('should show empty state when there are no users', () => {
+      mockUsersData = [];
+      mockPagination = { total: 0, totalPages: 1 };
+      render(<UserManagement />);
+
+      expect(screen.getByText('No se encontraron usuarios')).toBeInTheDocument();
+      // Dependiendo del filtro activo: "Intenta ajustar los filtros..." o "Comienza agregando tu primer usuario"
+      const subtitle = screen.getByText(/Intenta ajustar los filtros de búsqueda|Comienza agregando tu primer usuario/);
+      expect(subtitle).toBeInTheDocument();
+    });
+
+    it('should show filter-adjusted message when search has no results', () => {
+      mockUsersData = [];
+      mockPagination = { total: 0, totalPages: 1 };
+      render(<UserManagement />);
+
+      expect(screen.getByText('No se encontraron usuarios')).toBeInTheDocument();
+    });
   });
 
   describe('Initial rendering', () => {
@@ -350,8 +423,25 @@ describe('UserManagement', () => {
   describe('Statistics', () => {
     it('should display total count', () => {
       render(<UserManagement />);
-      
+
       expect(screen.getByText('Total')).toBeInTheDocument();
+    });
+
+    it('should display correct statistics (Total 2, Activos 1, Inactivos 1)', () => {
+      render(<UserManagement />);
+
+      expect(screen.getByText('Total')).toBeInTheDocument();
+      expect(screen.getByText('Activos')).toBeInTheDocument();
+      expect(screen.getByText('Inactivos')).toBeInTheDocument();
+      // stats.total from pagination, stats.active/inactive from filtered users
+      expect(screen.getByText('2')).toBeInTheDocument(); // total
+      expect(screen.getAllByText('1').length).toBeGreaterThan(0); // activos 1, inactivos 1
+    });
+
+    it('should show results count (Mostrando X de Y usuarios)', () => {
+      render(<UserManagement />);
+
+      expect(screen.getByText(/Mostrando 2 de 2 usuarios/)).toBeInTheDocument();
     });
   });
 
