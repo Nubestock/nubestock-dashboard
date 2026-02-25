@@ -1,119 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="106" failures="0" errors="0" time="1.558">
-  <testsuite name="UserManagement" errors="0" failures="0" skipped="0" timestamp="2026-02-25T14:15:30" time="0.985" tests="106">
-    <testcase classname="UserManagement › Loading state" name="should show loading spinner and message when isLoading is true" time="0.025">
+<testsuites name="jest tests" tests="224" failures="0" errors="0" time="5.61">
+  <testsuite name="UserManagement" errors="0" failures="0" skipped="0" timestamp="2026-02-25T14:25:48" time="1.381" tests="115">
+    <testcase classname="UserManagement › Loading state" name="should show loading spinner and message when isLoading is true" time="0.026">
     </testcase>
     <testcase classname="UserManagement › Loading state" name="should not show user list while loading" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Error state" name="should show error message when error is set" time="0.002">
+    <testcase classname="UserManagement › Error state" name="should show error message when error is set" time="0.001">
     </testcase>
-    <testcase classname="UserManagement › Error state" name="should show error in Alert and keep header visible" time="0.002">
+    <testcase classname="UserManagement › Error state" name="should show error in Alert and keep header visible" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Empty state" name="should show empty state when there are no users" time="0.008">
+    <testcase classname="UserManagement › Empty state" name="should show empty state when there are no users" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Empty state" name="should show filter-adjusted message when search has no results" time="0.006">
+    <testcase classname="UserManagement › Empty state" name="should show filter-adjusted message when search has no results" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Initial rendering" name="should render the component with title" time="0.04">
+    <testcase classname="UserManagement › Initial rendering" name="should render the component with title" time="0.045">
     </testcase>
-    <testcase classname="UserManagement › Initial rendering" name="should render page subtitle" time="0.008">
+    <testcase classname="UserManagement › Initial rendering" name="should render page subtitle" time="0.007">
     </testcase>
     <testcase classname="UserManagement › Initial rendering" name="should render search input" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › User display" name="should display user names" time="0.014">
+    <testcase classname="UserManagement › User display" name="should display user names" time="0.013">
     </testcase>
-    <testcase classname="UserManagement › User display" name="should display user emails" time="0.008">
+    <testcase classname="UserManagement › User display" name="should display user emails" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Status badges" name="should display active badge" time="0.008">
+    <testcase classname="UserManagement › Status badges" name="should display active badge" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Status badges" name="should display inactive badge" time="0.012">
+    <testcase classname="UserManagement › Status badges" name="should display inactive badge" time="0.009">
     </testcase>
     <testcase classname="UserManagement › Tabs" name="should render tabs component" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Tabs" name="should have users tab" time="0.005">
+    <testcase classname="UserManagement › Tabs" name="should have users tab" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Tabs" name="should have roles tab" time="0.007">
+    <testcase classname="UserManagement › Tabs" name="should have roles tab" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Icons" name="should render plus icon" time="0.007">
+    <testcase classname="UserManagement › Icons" name="should render plus icon" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Icons" name="should render search icon" time="0.006">
+    <testcase classname="UserManagement › Icons" name="should render search icon" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Icons" name="should render users icon" time="0.006">
+    <testcase classname="UserManagement › Icons" name="should render users icon" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Icons" name="should render usercheck icon" time="0.005">
+    <testcase classname="UserManagement › Icons" name="should render usercheck icon" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Icons" name="should render userx icon" time="0.007">
+    <testcase classname="UserManagement › Icons" name="should render userx icon" time="0.01">
     </testcase>
     <testcase classname="UserManagement › Icons" name="should render shield icon" time="0.004">
     </testcase>
     <testcase classname="UserManagement › Search functionality" name="should filter users when typing" time="0.012">
     </testcase>
-    <testcase classname="UserManagement › Card components" name="should render multiple cards" time="0.007">
+    <testcase classname="UserManagement › Card components" name="should render multiple cards" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Badge components" name="should render badges" time="0.005">
+    <testcase classname="UserManagement › Badge components" name="should render badges" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Statistics" name="should display total count" time="0.008">
+    <testcase classname="UserManagement › Statistics" name="should display total count" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Statistics" name="should display correct statistics (Total 2, Activos 1, Inactivos 1)" time="0.014">
+    <testcase classname="UserManagement › Statistics" name="should display correct statistics (Total 2, Activos 1, Inactivos 1)" time="0.016">
     </testcase>
-    <testcase classname="UserManagement › Statistics" name="should show results count (Mostrando X de Y usuarios)" time="0.007">
+    <testcase classname="UserManagement › Statistics" name="should show results count (Mostrando X de Y usuarios)" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Input components" name="should have input elements" time="0.005">
+    <testcase classname="UserManagement › Input components" name="should have input elements" time="0.004">
     </testcase>
     <testcase classname="UserManagement › Role display" name="should display role badges" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Create User Dialog" name="should have plus icons for new user" time="0.006">
+    <testcase classname="UserManagement › Create User Dialog" name="should have plus icons for new user" time="0.007">
     </testcase>
     <testcase classname="UserManagement › Dropdown menu actions" name="should have more vertical icons" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Dropdown menu actions" name="should have edit buttons in dropdown" time="0.005">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have edit buttons in dropdown" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Dropdown menu actions" name="should have delete buttons in dropdown" time="0.008">
+    <testcase classname="UserManagement › Dropdown menu actions" name="should have delete buttons in dropdown" time="0.011">
     </testcase>
     <testcase classname="UserManagement › Dropdown menu actions" name="should have roles related buttons" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Filter Sheet" name="should have user filter options" time="0.006">
+    <testcase classname="UserManagement › Filter Sheet" name="should have user filter options" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Filter Sheet" name="should have &quot;Todos&quot; text in filter options" time="0.004">
+    <testcase classname="UserManagement › Filter Sheet" name="should have &quot;Todos&quot; text in filter options" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Filter Sheet" name="should click Activos filter" time="0.008">
+    <testcase classname="UserManagement › Filter Sheet" name="should click Activos filter" time="0.007">
     </testcase>
     <testcase classname="UserManagement › Filter Sheet" name="should click Inactivos filter" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Edit User" name="should click edit button" time="0.008">
+    <testcase classname="UserManagement › Edit User" name="should click edit button" time="0.009">
     </testcase>
     <testcase classname="UserManagement › Delete User" name="should click delete button" time="0.01">
     </testcase>
-    <testcase classname="UserManagement › User Roles" name="should have roles tab" time="0.004">
+    <testcase classname="UserManagement › User Roles" name="should have roles tab" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Tabs switching" name="should click users tab" time="0.006">
+    <testcase classname="UserManagement › Tabs switching" name="should click users tab" time="0.009">
     </testcase>
-    <testcase classname="UserManagement › Tabs switching" name="should click roles tab" time="0.004">
+    <testcase classname="UserManagement › Tabs switching" name="should click roles tab" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Refresh functionality" name="should have refresh icon" time="0.005">
+    <testcase classname="UserManagement › Refresh functionality" name="should have refresh icon" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Empty search results" name="should handle empty search" time="0.007">
+    <testcase classname="UserManagement › Empty search results" name="should handle empty search" time="0.006">
     </testcase>
     <testcase classname="UserManagement › Phone display" name="should display phone icon" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Password reset" name="should have password reset button in dropdown" time="0.009">
+    <testcase classname="UserManagement › Password reset" name="should have password reset button in dropdown" time="0.01">
     </testcase>
-    <testcase classname="UserManagement › Password reset" name="should click password reset button" time="0.007">
+    <testcase classname="UserManagement › Password reset" name="should click password reset button" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › User creation form" name="should have inputs for user data" time="0.004">
+    <testcase classname="UserManagement › User creation form" name="should have inputs for user data" time="0.003">
     </testcase>
     <testcase classname="UserManagement › Role badges" name="should display role name in badge" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Email display" name="should display mail icon" time="0.006">
+    <testcase classname="UserManagement › Email display" name="should display mail icon" time="0.007">
     </testcase>
     <testcase classname="UserManagement › User count statistics" name="should display user statistics" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Active/Inactive counts" name="should show active users count label" time="0.004">
+    <testcase classname="UserManagement › Active/Inactive counts" name="should show active users count label" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Active/Inactive counts" name="should show inactive users count label" time="0.009">
+    <testcase classname="UserManagement › Active/Inactive counts" name="should show inactive users count label" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Dropdown menu" name="should have more vertical icons" time="0.003">
+    <testcase classname="UserManagement › Dropdown menu" name="should have more vertical icons" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Key icon" name="should display key icon" time="0.004">
+    <testcase classname="UserManagement › Key icon" name="should display key icon" time="0.003">
     </testcase>
     <testcase classname="UserManagement › Edit user dialog" name="should open dialog when clicking edit" time="0.011">
     </testcase>
@@ -121,97 +121,335 @@
     </testcase>
     <testcase classname="UserManagement › Checkbox for permissions" name="should have checkbox elements" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Calendar icon" name="should have date related icons" time="0.004">
+    <testcase classname="UserManagement › Calendar icon" name="should have date related icons" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Add User Form" name="should have nuevo usuario button" time="0.006">
+    <testcase classname="UserManagement › Add User Form" name="should have nuevo usuario button" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Add User Form" name="should have inputs in user form" time="0.005">
+    <testcase classname="UserManagement › Add User Form" name="should have inputs in user form" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Edit User Form" name="should open edit form when clicking edit" time="0.009">
+    <testcase classname="UserManagement › Edit User Form" name="should open edit form when clicking edit" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Delete User" name="should show delete confirmation dialog" time="0.01">
+    <testcase classname="UserManagement › Delete User" name="should show delete confirmation dialog" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Delete User" name="should have cancel option in delete dialog" time="0.008">
+    <testcase classname="UserManagement › Delete User" name="should have cancel option in delete dialog" time="0.007">
     </testcase>
     <testcase classname="UserManagement › Assign Role" name="should have roles button in dropdown" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Reset Password" name="should have reset password option" time="0.007">
+    <testcase classname="UserManagement › Assign Role" name="should show error when assigning role without selecting user/role" time="0.08">
     </testcase>
-    <testcase classname="UserManagement › Reset Password" name="should click reset password" time="0.007">
+    <testcase classname="UserManagement › Assign Role" name="should show error when assigning role without reason" time="0.019">
+    </testcase>
+    <testcase classname="UserManagement › Assign Role" name="should show error toast when assignRole API fails" time="0.024">
+    </testcase>
+    <testcase classname="UserManagement › Reset Password" name="should have reset password option" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Reset Password" name="should click reset password" time="0.008">
     </testcase>
     <testcase classname="UserManagement › Refresh Users" name="should have refresh functionality" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Filter users" name="should filter active users" time="0.004">
+    <testcase classname="UserManagement › Filter users" name="should filter active users" time="0.007">
     </testcase>
     <testcase classname="UserManagement › Filter users" name="should filter inactive users" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › User roles display" name="should display user roles" time="0.005">
+    <testcase classname="UserManagement › User roles display" name="should display user roles" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › User details" name="should display user email" time="0.004">
+    <testcase classname="UserManagement › User details" name="should display user email" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › User details" name="should display user status" time="0.007">
+    <testcase classname="UserManagement › User details" name="should display user status" time="0.004">
     </testcase>
     <testcase classname="UserManagement › Tabs navigation" name="should have users and roles tabs" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Tabs navigation" name="should switch to roles tab" time="0.004">
+    <testcase classname="UserManagement › Tabs navigation" name="should switch to roles tab" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Roles management" name="should click roles tab" time="0.004">
+    <testcase classname="UserManagement › Roles management" name="should click roles tab" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Create User Form Validation" name="should have create user dialog" time="0.009">
+    <testcase classname="UserManagement › Create User Form Validation" name="should have create user dialog" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Create User Form Validation" name="should have name input in create form" time="0.006">
+    <testcase classname="UserManagement › Create User Form Validation" name="should have name input in create form" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Create User Form Validation" name="should have email input in create form" time="0.008">
+    <testcase classname="UserManagement › Create User Form Validation" name="should have email input in create form" time="0.007">
     </testcase>
-    <testcase classname="UserManagement › Create User Form Validation" name="should have password input in create form" time="0.009">
+    <testcase classname="UserManagement › Create User Form Validation" name="should have password input in create form" time="0.008">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should show error when submitting without name" time="0.068">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should show error when submitting without email" time="0.059">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should show error when password is empty or less than 8 characters" time="0.064">
+    </testcase>
+    <testcase classname="UserManagement › Create User Form Validation" name="should show error toast when createUser fails" time="0.063">
     </testcase>
     <testcase classname="UserManagement › Edit User Form" name="should open edit dialog" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Edit User Form" name="should have save button in edit form" time="0.011">
+    <testcase classname="UserManagement › Edit User Form" name="should have save button in edit form" time="0.008">
     </testcase>
     <testcase classname="UserManagement › Delete User Confirmation" name="should open delete confirmation" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Delete User Confirmation" name="should have confirm button in delete dialog" time="0.011">
+    <testcase classname="UserManagement › Delete User Confirmation" name="should have confirm button in delete dialog" time="0.009">
     </testcase>
-    <testcase classname="UserManagement › User Status Toggle" name="should display active status" time="0.005">
+    <testcase classname="UserManagement › Delete User Confirmation" name="should call deleteUser and show success toast when confirming delete" time="0.019">
     </testcase>
-    <testcase classname="UserManagement › User Status Toggle" name="should display inactive status" time="0.004">
+    <testcase classname="UserManagement › Delete User Confirmation" name="should show error toast when deleteUser fails" time="0.014">
     </testcase>
-    <testcase classname="UserManagement › Search Users" name="should have search input" time="0.004">
+    <testcase classname="UserManagement › User Status Toggle" name="should display active status" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › Search Users" name="should filter users on search" time="0.008">
+    <testcase classname="UserManagement › User Status Toggle" name="should display inactive status" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Pagination" name="should display total users" time="0.005">
+    <testcase classname="UserManagement › Search Users" name="should have search input" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › User Phone Display" name="should display user phone number" time="0.005">
+    <testcase classname="UserManagement › Search Users" name="should filter users on search" time="0.005">
+    </testcase>
+    <testcase classname="UserManagement › Pagination" name="should display total users" time="0.006">
+    </testcase>
+    <testcase classname="UserManagement › User Phone Display" name="should display user phone number" time="0.004">
     </testcase>
     <testcase classname="UserManagement › Role Badge Display" name="should display role badges" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Dropdown Menu Actions" name="should have action buttons" time="0.006">
+    <testcase classname="UserManagement › Dropdown Menu Actions" name="should have action buttons" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Filter Sheet" name="should have filter icon" time="0.004">
+    <testcase classname="UserManagement › Filter Sheet" name="should have filter icon" time="0.006">
     </testcase>
-    <testcase classname="UserManagement › User Stats Cards" name="should display user statistics" time="0.003">
+    <testcase classname="UserManagement › User Stats Cards" name="should display user statistics" time="0.004">
     </testcase>
-    <testcase classname="UserManagement › Role Assignment" name="should have assign role option" time="0.004">
+    <testcase classname="UserManagement › Role Assignment" name="should have assign role option" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › User Email Display" name="should show mail icons" time="0.006">
+    <testcase classname="UserManagement › User Email Display" name="should show mail icons" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › User Actions" name="should have users icon" time="0.004">
+    <testcase classname="UserManagement › User Actions" name="should have users icon" time="0.005">
     </testcase>
-    <testcase classname="UserManagement › Refresh Users Button" name="should have refresh icon" time="0.004">
+    <testcase classname="UserManagement › Refresh Users Button" name="should have refresh icon" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Refresh Users Button" name="should click refresh button" time="0.034">
+    <testcase classname="UserManagement › Refresh Users Button" name="should click refresh button" time="0.02">
     </testcase>
-    <testcase classname="UserManagement › User Name Display" name="should display user names" time="0.005">
+    <testcase classname="UserManagement › User Name Display" name="should display user names" time="0.008">
     </testcase>
-    <testcase classname="UserManagement › Create Role Dialog" name="should switch to roles tab and see plus icon" time="0.006">
+    <testcase classname="UserManagement › Create Role Dialog" name="should switch to roles tab and see plus icon" time="0.003">
     </testcase>
-    <testcase classname="UserManagement › Permission Display" name="should have checkbox components" time="0.007">
+    <testcase classname="UserManagement › Permission Display" name="should have checkbox components" time="0.004">
     </testcase>
     <testcase classname="UserManagement › Dialog Behavior" name="should close dialog on cancel" time="0.01">
     </testcase>
-    <testcase classname="UserManagement › Loading State" name="should not show loading when data loaded" time="0.004">
+    <testcase classname="UserManagement › Loading State" name="should not show loading when data loaded" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="RecipeManagement" errors="0" failures="0" skipped="0" timestamp="2026-02-25T14:25:49" time="3.709" tests="109">
+    <testcase classname="RecipeManagement › Initial rendering" name="should render the component with title" time="0.011">
+    </testcase>
+    <testcase classname="RecipeManagement › Initial rendering" name="should render statistics cards" time="0.006">
+    </testcase>
+    <testcase classname="RecipeManagement › Initial rendering" name="should render the recipes list" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Initial rendering" name="should render New Recipe button" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Initial rendering" name="should have a search input" time="0.006">
+    </testcase>
+    <testcase classname="RecipeManagement › Initial rendering" name="should render the refresh button" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Filtering" name="should have filter dropdown" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Filtering" name="should have search placeholder" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe display" name="should display recipe product name" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe display" name="should display recipe product SKU" time="0.006">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe display" name="should display product cards from recipe data" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Statistics" name="should display total recipes count" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Statistics" name="should display materials used count" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Statistics" name="should display products without recipe count" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Search functionality" name="should filter products when typing in search" time="0.007">
+    </testcase>
+    <testcase classname="RecipeManagement › Search functionality" name="should filter by SKU" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Refresh functionality" name="should call refetch when refresh button is clicked" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe card display" name="should show material count" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe card display" name="should display recipe card description" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Product filter checkbox" name="should render checkboxes for product selection" time="0.007">
+    </testcase>
+    <testcase classname="RecipeManagement › Material display" name="should show material name in recipe" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Material display" name="should show material code" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Material display" name="should show measure name badge" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Accordion interactions" name="should render accordion component" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Table display" name="should show table headers" time="0.01">
+    </testcase>
+    <testcase classname="RecipeManagement › New Recipe button" name="should open dialog on click" time="0.028">
+    </testcase>
+    <testcase classname="RecipeManagement › Edit recipe" name="should have edit button in recipe card" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Materials summary" name="should display materials count summary" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Format currency helper" name="should render component without currency formatting errors" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show dialog title for new recipe" time="0.012">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show product selector in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show materials label in dialog" time="0.012">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show cancel button in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show create button in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should show empty materials message in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog content" name="should have Add button in dialog" time="0.011">
+    </testcase>
+    <testcase classname="RecipeManagement › handleSaveRecipe validation and submit" name="should show error when materials are incomplete (id_product missing)" time="0.056">
+    </testcase>
+    <testcase classname="RecipeManagement › Product selection in filter" name="should render all products checkbox" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Product selection in filter" name="should display select all label" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Card components" name="should render multiple cards" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe description" name="should show page subtitle" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Empty state handling" name="should not crash when rendering without recipes" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render chef icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render package icon" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render alert circle icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render book icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render search icon" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render filter icon" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render plus icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render layers icon" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render edit icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Icons rendering" name="should render refresh icon" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Edit recipe interactions" name="should click edit button" time="0.006">
+    </testcase>
+    <testcase classname="RecipeManagement › Delete recipe" name="should have delete icons" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Product filter filter" name="should click &quot;Todos los productos&quot; filter" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Product filter filter" name="should filter options exist" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Checkbox interactions" name="should click Seleccionar todos checkbox" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Checkbox interactions" name="should toggle individual checkbox" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Cancel dialog" name="should click cancel button in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Material quantity input" name="should have material inputs in dialog" time="0.012">
+    </testcase>
+    <testcase classname="RecipeManagement › Dropdown interactions" name="should have trash icons for delete" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Add material row" name="should have agregar button in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Add material row" name="should click agregar button" time="0.012">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe save validation" name="should have crear button in dialog" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Select product for recipe" name="should have product selector in dialog" time="0.01">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe editing" name="should open edit dialog with product data" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Empty materials message" name="should show empty materials message in new recipe dialog" time="0.01">
+    </testcase>
+    <testcase classname="RecipeManagement › Filter by recipe status" name="should have filter dropdown" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Material table in recipe" name="should show table headers" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe list display" name="should display product names with recipes" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe list display" name="should display product SKU codes" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe materials" name="should display material names in recipes" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe quantities" name="should display material quantities" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Accordion behavior" name="should have accordion items for recipes" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Accordion behavior" name="should have accordion component" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Delete recipe" name="should have trash icons for delete" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Delete recipe" name="should click delete button" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe filter checkbox" name="should have checkbox for product selection" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe filter checkbox" name="should click select all checkbox" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe search" name="should have search input" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe search" name="should filter recipes when searching" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Add material to recipe" name="should have material selector in dialog" time="0.011">
+    </testcase>
+    <testcase classname="RecipeManagement › Product category" name="should display category labels" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe refresh" name="should have refresh functionality" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe unit display" name="should show unit of measurement" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe actions" name="should have edit buttons for recipes" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Card content" name="should display recipe details in cards" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Filter select" name="should have filter select dropdown" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Loading indicators" name="should not show loading when data loaded" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Empty state" name="should handle no recipes gracefully" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › New Recipe Button" name="should click new recipe button" time="0.008">
+    </testcase>
+    <testcase classname="RecipeManagement › Cancel Button" name="should close dialog on cancel" time="0.021">
+    </testcase>
+    <testcase classname="RecipeManagement › Create Button" name="should have create button in dialog" time="0.01">
+    </testcase>
+    <testcase classname="RecipeManagement › Agregar Button" name="should have agregar button in dialog" time="0.008">
+    </testcase>
+    <testcase classname="RecipeManagement › Product Selector" name="should have product selector in recipe form" time="3.015">
+    </testcase>
+    <testcase classname="RecipeManagement › Materials Label" name="should have materials label" time="0.021">
+    </testcase>
+    <testcase classname="RecipeManagement › Recipe Title" name="should display recipe management title" time="0.006">
+    </testcase>
+    <testcase classname="RecipeManagement › Plus Icon" name="should have plus icon" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Checkbox Behavior" name="should have selectable checkboxes" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Checkbox Behavior" name="should click checkbox" time="0.005">
+    </testcase>
+    <testcase classname="RecipeManagement › Empty Materials" name="should show empty materials message" time="0.012">
+    </testcase>
+    <testcase classname="RecipeManagement › Table Headers" name="should have material header" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Table Headers" name="should have codigo SKU header" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Filter Options" name="should have todos filter option" time="0.004">
+    </testcase>
+    <testcase classname="RecipeManagement › Dialog Content" name="should have dialog header" time="0.009">
+    </testcase>
+    <testcase classname="RecipeManagement › Seleccionar todos" name="should have seleccionar todos label" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Accordion Trigger" name="should have accordion triggers" time="0.002">
+    </testcase>
+    <testcase classname="RecipeManagement › Material Table" name="should have material columns" time="0.003">
+    </testcase>
+    <testcase classname="RecipeManagement › Product Selection" name="should have product selection in form" time="0.011">
     </testcase>
   </testsuite>
 </testsuites>

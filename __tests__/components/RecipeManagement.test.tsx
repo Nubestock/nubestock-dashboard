@@ -64,9 +64,10 @@ jest.mock('@/app/hooks/useRecipes', () => ({
   }),
 }));
 
+let mockProductsForRecipe = mockProducts;
 jest.mock('@/app/hooks/useProducts', () => ({
   useProducts: (page?: number, limit?: number, type?: string) => ({
-    products: type === 'MP' ? mockProducts.filter(p => p.type === 'MP') : mockProducts,
+    products: type === 'MP' ? mockProducts.filter(p => p.type === 'MP') : mockProductsForRecipe,
     pagination: { total: mockProducts.length },
     isLoading: false,
     error: null,
@@ -197,6 +198,7 @@ jest.mock('@/app/components/ui/alert', () => ({
 describe('RecipeManagement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockProductsForRecipe = mockProducts;
   });
 
   describe('Initial rendering', () => {
@@ -500,6 +502,23 @@ describe('RecipeManagement', () => {
       
       await waitFor(() => {
         expect(screen.getByText('Agregar')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('handleSaveRecipe validation and submit', () => {
+    it('should show error when materials are incomplete (id_product missing)', async () => {
+      render(<RecipeManagement />);
+      fireEvent.click(screen.getByText('Nueva Receta'));
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+
+      fireEvent.click(screen.getByText('Agregar'));
+      await waitFor(() => expect(screen.queryByText('No hay materiales agregados')).not.toBeInTheDocument());
+
+      fireEvent.click(screen.getByRole('button', { name: 'Crear' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Completa todos los materiales con cantidad válida');
       });
     });
   });

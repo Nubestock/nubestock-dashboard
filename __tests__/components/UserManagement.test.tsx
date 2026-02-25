@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import UserManagement from '@/app/components/UserManagement';
 
 // Mock toast
@@ -177,11 +177,22 @@ jest.mock('@/app/components/ui/alert-dialog', () => ({
 
 jest.mock('@/app/components/ui/select', () => ({
   Select: ({ children, onValueChange, value }: { children: React.ReactNode; onValueChange?: (v: string) => void; value?: string }) => (
-    <div data-testid="select" data-value={value}>{children}</div>
+    <div
+      data-testid="select"
+      data-value={value}
+      onClick={(e: React.MouseEvent) => {
+        const target = (e.target as HTMLElement).closest('[data-select-value]');
+        if (target && onValueChange) onValueChange(target.getAttribute('data-select-value') || '');
+      }}
+    >
+      {children}
+    </div>
   ),
   SelectTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   SelectContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => <option value={value}>{children}</option>,
+  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => (
+    <div data-select-value={value} role="option">{children}</div>
+  ),
   SelectValue: ({ placeholder }: { placeholder?: string }) => <span>{placeholder}</span>,
 }));
 
@@ -810,6 +821,50 @@ describe('UserManagement', () => {
       const shieldIcons = screen.getAllByTestId('icon-shield');
       expect(shieldIcons.length).toBeGreaterThan(0);
     });
+
+    it('should show error when assigning role without selecting user/role', async () => {
+      render(<UserManagement />);
+      const assignRoleButtons = screen.getAllByText('Asignar rol');
+      fireEvent.click(assignRoleButtons[0]);
+
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const assignBtn = screen.getByRole('button', { name: 'Asignar Rol' });
+      fireEvent.click(assignBtn);
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Debe seleccionar un usuario y un rol');
+      });
+    });
+
+    it('should show error when assigning role without reason', async () => {
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByText('Asignar rol')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dialog = screen.getByTestId('dialog');
+
+      fireEvent.click(within(dialog).getByRole('option', { name: 'Administrador' }));
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Asignar Rol' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Debe proporcionar una razón para la asignación del rol');
+      });
+    });
+
+    it('should show error toast when assignRole API fails', async () => {
+      mockAssignRole.mockRejectedValueOnce(new Error('Error al asignar rol'));
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByText('Asignar rol')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+      const dialog = screen.getByTestId('dialog');
+
+      fireEvent.click(within(dialog).getByRole('option', { name: 'Administrador' }));
+      fireEvent.change(within(dialog).getByPlaceholderText('Describe el motivo de esta asignación'), { target: { value: 'Razón de prueba' } });
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Asignar Rol' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Error al asignar rol');
+      });
+    });
   });
 
   describe('Reset Password', () => {
@@ -958,6 +1013,65 @@ describe('UserManagement', () => {
         expect(screen.getByText('Contraseña')).toBeInTheDocument();
       });
     });
+
+    it('should show error when submitting without name', async () => {
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByTestId('icon-plus')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+
+      fireEvent.change(screen.getByPlaceholderText('juan@nutregam.com'), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'password123' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('El nombre es requerido');
+      });
+    });
+
+    it('should show error when submitting without email', async () => {
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByTestId('icon-plus')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+
+      fireEvent.change(screen.getByPlaceholderText('Juan Pérez'), { target: { value: 'Test User' } });
+      fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'password123' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('El correo electrónico es requerido');
+      });
+    });
+
+    it('should show error when password is empty or less than 8 characters', async () => {
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByTestId('icon-plus')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+
+      fireEvent.change(screen.getByPlaceholderText('Juan Pérez'), { target: { value: 'Test User' } });
+      fireEvent.change(screen.getByPlaceholderText('juan@nutregam.com'), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'short' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('La contraseña debe tener al menos 8 caracteres');
+      });
+    });
+
+    it('should show error toast when createUser fails', async () => {
+      mockCreateUser.mockRejectedValueOnce(new Error('Email ya registrado'));
+      render(<UserManagement />);
+      fireEvent.click(screen.getAllByTestId('icon-plus')[0]);
+      await waitFor(() => expect(screen.getByTestId('dialog')).toBeInTheDocument());
+
+      fireEvent.change(screen.getByPlaceholderText('Juan Pérez'), { target: { value: 'Test User' } });
+      fireEvent.change(screen.getByPlaceholderText('juan@nutregam.com'), { target: { value: 'test@test.com' } });
+      fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'password123' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Email ya registrado');
+      });
+    });
   });
 
   describe('Edit User Form', () => {
@@ -1006,6 +1120,37 @@ describe('UserManagement', () => {
       await waitFor(() => {
         const confirmButtons = screen.queryAllByText('Confirmar');
         expect(confirmButtons.length).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('should call deleteUser and show success toast when confirming delete', async () => {
+      render(<UserManagement />);
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+
+      await waitFor(() => expect(screen.getByTestId('alert-dialog')).toBeInTheDocument());
+      const alertDialog = screen.getByTestId('alert-dialog');
+      const confirmBtn = within(alertDialog).getByRole('button', { name: 'Eliminar' });
+      fireEvent.click(confirmBtn);
+
+      await waitFor(() => {
+        expect(mockDeleteUser).toHaveBeenCalled();
+        expect(mockToastSuccess).toHaveBeenCalledWith('Usuario eliminado exitosamente');
+      });
+    });
+
+    it('should show error toast when deleteUser fails', async () => {
+      mockDeleteUser.mockRejectedValueOnce(new Error('Error al eliminar usuario'));
+      render(<UserManagement />);
+      const deleteButtons = screen.getAllByText('Eliminar');
+      fireEvent.click(deleteButtons[0]);
+
+      await waitFor(() => expect(screen.getByTestId('alert-dialog')).toBeInTheDocument());
+      const alertDialog = screen.getByTestId('alert-dialog');
+      fireEvent.click(within(alertDialog).getByRole('button', { name: 'Eliminar' }));
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith('Error al eliminar usuario');
       });
     });
   });
