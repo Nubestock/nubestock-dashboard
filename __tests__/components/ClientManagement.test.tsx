@@ -53,9 +53,9 @@ const mockBulkCreateClients = jest.fn();
 
 const mockClients = [
   {
-    id: '1',
+    id: 1,
     identification: '1234567890001',
-    identification_type: 'RUC',
+    identification_type: 'RUC' as const,
     name: 'Client One',
     email: 'client1@test.com',
     phone: '+593999999999',
@@ -71,9 +71,9 @@ const mockClients = [
     creation_date: '2024-01-15T10:00:00Z',
   },
   {
-    id: '2',
+    id: 2,
     identification: '0987654321',
-    identification_type: 'CED',
+    identification_type: 'CED' as const,
     name: 'Client Two',
     email: 'client2@test.com',
     phone: '+593888888888',
@@ -89,9 +89,9 @@ const mockClients = [
     creation_date: '2024-01-14T10:00:00Z',
   },
   {
-    id: '3',
+    id: 3,
     identification: '1111111111',
-    identification_type: 'CED',
+    identification_type: 'CED' as const,
     name: 'Inactive Client',
     email: 'inactive@test.com',
     phone: '+593777777777',
@@ -108,6 +108,11 @@ const mockClients = [
   },
 ];
 
+// Estado mutable para probar loading, error y lista vacía
+let mockClientsData: typeof mockClients = [];
+let mockLoading = false;
+let mockError: string | null = null;
+
 const mockProvinces = [
   { id: 1, name: 'Pichincha', id_country: 1 },
   { id: 2, name: 'Guayas', id_country: 1 },
@@ -120,9 +125,9 @@ const mockCities = [
 
 jest.mock('../../src/app/hooks/useClients', () => ({
   useClients: () => ({
-    clients: mockClients,
-    isLoading: false,
-    error: null,
+    get clients() { return mockClientsData; },
+    get isLoading() { return mockLoading; },
+    get error() { return mockError; },
     refetch: mockRefetch,
     createClient: mockCreateClient,
     bulkCreateClients: mockBulkCreateClients,
@@ -221,9 +226,87 @@ jest.mock('../../src/app/components/ui/dropdown-menu', () => ({
 describe('ClientManagement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockClientsData = [...mockClients];
+    mockLoading = false;
+    mockError = null;
     mockCreateClient.mockResolvedValue({});
     mockBulkCreateClients.mockResolvedValue({});
     mockDownloadWorkbook.mockResolvedValue(undefined);
+  });
+
+  describe('Loading state', () => {
+    it('should show loading spinner and message when isLoading is true', () => {
+      mockLoading = true;
+      render(<ClientManagement />);
+
+      expect(screen.getByText('Cargando clientes...')).toBeInTheDocument();
+      expect(screen.queryByText('Client One')).not.toBeInTheDocument();
+    });
+
+    it('should not show client list while loading', () => {
+      mockLoading = true;
+      render(<ClientManagement />);
+
+      expect(screen.queryByPlaceholderText('Buscar cliente...')).toBeInTheDocument();
+      expect(screen.queryByText('Total')).toBeInTheDocument();
+      expect(screen.queryAllByText('Client One')).toHaveLength(0);
+    });
+  });
+
+  describe('Error state', () => {
+    it('should show error message when error is set', () => {
+      mockError = 'Error de conexión con el servidor';
+      render(<ClientManagement />);
+
+      expect(screen.getByText('Error de conexión con el servidor')).toBeInTheDocument();
+    });
+
+    it('should show error and not show loading when error is set and not loading', () => {
+      mockError = 'Fallo al cargar';
+      mockLoading = false;
+      render(<ClientManagement />);
+
+      expect(screen.getByText('Fallo al cargar')).toBeInTheDocument();
+      expect(screen.queryByText('Cargando clientes...')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Empty state', () => {
+    it('should show empty state when there are no clients', () => {
+      mockClientsData = [];
+      render(<ClientManagement />);
+
+      expect(screen.getByText('No se encontraron clientes')).toBeInTheDocument();
+      expect(screen.getByText('Comienza agregando tu primer cliente')).toBeInTheDocument();
+    });
+
+    it('should show filter-adjusted message and Limpiar filtros when search has no results', () => {
+      render(<ClientManagement />);
+
+      const searchInput = screen.getByPlaceholderText('Buscar cliente...');
+      fireEvent.change(searchInput, { target: { value: 'NoExisteNadie' } });
+
+      expect(screen.getByText('No se encontraron clientes')).toBeInTheDocument();
+      expect(screen.getByText('Intenta ajustar los filtros de búsqueda')).toBeInTheDocument();
+
+      const clearFiltersBtn = screen.getByRole('button', { name: /Limpiar filtros/i });
+      expect(clearFiltersBtn).toBeInTheDocument();
+    });
+
+    it('should show all clients again after clicking Limpiar filtros in empty filtered state', () => {
+      render(<ClientManagement />);
+
+      fireEvent.change(screen.getByPlaceholderText('Buscar cliente...'), {
+        target: { value: 'NoExiste' },
+      });
+      expect(screen.getByText('Limpiar filtros')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /Limpiar filtros/i }));
+
+      expect(screen.getAllByText('Client One').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Client Two').length).toBeGreaterThan(0);
+      expect(screen.queryByText('Intenta ajustar los filtros de búsqueda')).not.toBeInTheDocument();
+    });
   });
 
   describe('Rendering', () => {
@@ -252,13 +335,18 @@ describe('ClientManagement', () => {
 
     it('should render correct statistics values', () => {
       render(<ClientManagement />);
-      
-      // 3 total clients, 2 active, 2 with credit
-      const threeElements = screen.getAllByText('3');
-      expect(threeElements.length).toBeGreaterThan(0);
-      
-      const twoElements = screen.getAllByText('2');
-      expect(twoElements.length).toBeGreaterThan(0);
+
+      // Total: 3, Activos: 2, Con Crédito: 2, Crédito Total: 8K (5000+3000)
+      const cards = screen.getAllByTestId('card-content');
+      const cardText = cards.map(c => c.textContent).join(' ');
+      expect(cardText).toMatch(/3/);
+      expect(cardText).toMatch(/2/);
+      expect(screen.getByText('Total')).toBeInTheDocument();
+      expect(screen.getByText('Activos')).toBeInTheDocument();
+      expect(screen.getByText('Con Crédito')).toBeInTheDocument();
+      expect(screen.getByText('Crédito Total')).toBeInTheDocument();
+      // Crédito total = 5000+3000 = 8000 -> mostrado como "8K"
+      expect(screen.getByText('8K')).toBeInTheDocument();
     });
 
     it('should render client list', () => {
@@ -291,8 +379,24 @@ describe('ClientManagement', () => {
 
     it('should render inactive badge for inactive clients', () => {
       render(<ClientManagement />);
-      
+
       expect(screen.getAllByText('Inactivo').length).toBeGreaterThan(0);
+    });
+
+    it('should show results count (Mostrando X de Y clientes)', () => {
+      render(<ClientManagement />);
+
+      expect(screen.getByText(/Mostrando 3 de 3 clientes/)).toBeInTheDocument();
+    });
+
+    it('should show filtered results count when search is applied', () => {
+      render(<ClientManagement />);
+
+      fireEvent.change(screen.getByPlaceholderText('Buscar cliente...'), {
+        target: { value: 'Client One' },
+      });
+
+      expect(screen.getByText(/Mostrando 1 de 3 clientes/)).toBeInTheDocument();
     });
   });
 
@@ -331,12 +435,21 @@ describe('ClientManagement', () => {
   describe('Add client dialog', () => {
     it('should open add client form when button is clicked', () => {
       render(<ClientManagement />);
-      
-      // Click the "Nuevo Cliente" button
-      const addButton = screen.getByText(/Nuevo Cliente/);
+
+      const addButton = screen.getByRole('button', { name: /Nuevo Cliente/i });
       fireEvent.click(addButton);
-      
+
       expect(screen.getByTestId('client-form')).toBeInTheDocument();
+    });
+
+    it('should close add client form when Close is clicked', () => {
+      render(<ClientManagement />);
+
+      fireEvent.click(screen.getByRole('button', { name: /Nuevo Cliente/i }));
+      expect(screen.getByTestId('client-form')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('Close'));
+      expect(screen.queryByTestId('client-form')).not.toBeInTheDocument();
     });
   });
 
@@ -361,12 +474,26 @@ describe('ClientManagement', () => {
       
       render(<ClientManagement />);
       
-      // Find the export button - it may be rendered multiple times, use getAllByText
       const exportButtons = screen.getAllByText(/Exportar/);
       fireEvent.click(exportButtons[0]);
       
       await waitFor(() => {
         expect(mockToastError).toHaveBeenCalledWith('Error al exportar los datos');
+      });
+    });
+
+    it('should export only filtered clients and show correct count in toast', async () => {
+      render(<ClientManagement />);
+
+      // Filter to "Solo con Crédito" -> 2 clients (Client One, Inactive Client)
+      fireEvent.click(screen.getByText('Solo con Crédito'));
+
+      const exportButtons = screen.getAllByText(/Exportar/);
+      fireEvent.click(exportButtons[0]);
+
+      await waitFor(() => {
+        expect(mockAddSheetFromJson).toHaveBeenCalled();
+        expect(mockToastSuccess).toHaveBeenCalledWith('2 clientes exportados exitosamente');
       });
     });
   });

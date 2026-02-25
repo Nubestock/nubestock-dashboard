@@ -557,8 +557,8 @@ export default function BulkClientUpload({
                           {client.requires_credit ? (
                             <div className="text-xs">
                               <div className="font-semibold text-green-600">Sí</div>
-                              {client.credit_limit && <div>${client.credit_limit}</div>}
-                              {client.credit_days && <div>{client.credit_days} días</div>}
+                              {client.credit_limit != null && <div>${client.credit_limit}</div>}
+                              {client.credit_days != null && <div>{client.credit_days} días</div>}
                             </div>
                           ) : (
                             <span className="text-gray-500 text-xs">No</span>
