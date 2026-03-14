@@ -47,16 +47,15 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
 
       console.log('Respuesta del servidor:', response);
 
-      // Siempre mostrar éxito por seguridad (no revelar si el email existe o no)
+      // Éxito: no revelar si el email existe o no
       setSuccess(true);
       toast.success('Solicitud enviada exitosamente');
     } catch (err) {
       console.error('Error al solicitar restablecimiento:', err);
-      
-      // Por seguridad, siempre mostrar éxito incluso si hay error
-      // Esto evita que atacantes puedan verificar qué emails existen en el sistema
-      setSuccess(true);
-      toast.success('Si el correo existe, recibirás instrucciones para restablecer tu contraseña');
+      const message = err instanceof Error ? err.message : 'Error al enviar la solicitud';
+      // Si falla la petición (405, 500, red, URL no configurada), mostrar el error en pantalla
+      toast.error(message);
+      setSuccess(false);
     } finally {
       setLoading(false);
     }

@@ -24,7 +24,11 @@ export const API_CONFIG = {
 /** URL base del backend: localStorage (config del usuario) > env. Usar siempre esta función para login y resto de APIs. */
 export const getBackendUrl = (): string => {
   const saved = localStorage.getItem('nutregam_backend_url');
-  const base = (saved && saved.trim()) || API_CONFIG.BASE_URL || '';
+  let base = (saved && saved.trim()) || API_CONFIG.BASE_URL || '';
+  // Evitar que "null" o "undefined" (string) se usen como URL y provoquen peticiones a /null/...
+  if (base === 'null' || base === 'undefined' || base.toLowerCase() === 'null') {
+    base = '';
+  }
   return base;
 };
 
@@ -61,7 +65,10 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+      let errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+      if (response.status === 405) {
+        errorMessage = 'La URL configurada no es la API del backend (405 Method Not Allowed). Configure en Administración la URL de su backend (ej. Azure Functions).';
+      }
       
       // Lista de endpoints que pueden no estar implementados aún
       const optionalEndpoints = ['/origins', '/measures', '/stats', '/products/measures', '/products/origins', '/locations/countries', '/locations/provinces', '/locations/cities'];
