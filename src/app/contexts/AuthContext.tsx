@@ -104,8 +104,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsBackendConfigured(backendConfigured);
   }, []);
 
-  // Cargar datos del localStorage al iniciar
+  // Cargar datos del localStorage al iniciar, o auto-login con token desde app móvil (mobile_token en URL)
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mobileToken = params.get('mobile_token');
+
+    // Sesión desde app móvil: token en URL → guardar y usar como ya logueado (sin pedir login en la web)
+    if (mobileToken && typeof window !== 'undefined') {
+      try {
+        const decoded = decodeJWT(mobileToken);
+        if (decoded) {
+          const userId = decoded.userId ?? decoded.sub;
+        const userFromJwt: User = {
+            id: typeof userId === 'number' ? userId : Number(userId) || 0,
+            name: decoded.name ?? decoded.email ?? 'Usuario',
+            email: decoded.email ?? '',
+            is_active: true,
+            creation_date: new Date().toISOString(),
+            roles: decoded.roles ?? [],
+            rolesDetails: decoded.rolesDetails ?? [],
+            permissions: decoded.permissions ?? [],
+          };
+          setUser(userFromJwt);
+          setToken(mobileToken);
+          setRefreshToken(null);
+          setPermissions(decoded.permissions ?? []);
+          setRoles(decoded.roles ?? []);
+          localStorage.setItem('user', JSON.stringify(userFromJwt));
+          localStorage.setItem('token', mobileToken);
+          // Quitar mobile_token de la URL sin recargar (seguridad y limpieza)
+          const url = new URL(window.location.href);
+          url.searchParams.delete('mobile_token');
+          window.history.replaceState({}, '', url.pathname + url.search || '/');
+          console.log('Sesión iniciada desde app móvil (mobile_token)');
+          setIsLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.warn('Token móvil inválido o corrupto, se ignora', e);
+      }
+    }
+
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
     const storedRefreshToken = localStorage.getItem('refreshToken');
