@@ -504,7 +504,7 @@ export default function SalesManagement() {
               <p className="text-xs sm:text-sm text-neutral-600">Monto Total</p>
               <div className="flex items-end justify-between">
                 <span className="text-lg sm:text-xl font-bold text-purple-600">
-                  ${(stats.totalAmount / 1000).toFixed(1)}K
+                  ${Number(stats.totalAmount).toFixed(2)}
                 </span>
                 <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600/40" />
               </div>
