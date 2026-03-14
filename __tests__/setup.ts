@@ -7,6 +7,8 @@
 
 import '@testing-library/jest-dom';
 
+// window.location mutable lo proporciona jest-env-jsdom-mutable-location.cjs
+
 // Mock de variables de entorno de Vite usando globalThis
 // Jest no soporta import.meta directamente, así que creamos un mock global
 const mockEnv = {

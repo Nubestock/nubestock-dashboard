@@ -30,23 +30,22 @@ jest.mock('../../src/app/components/ui/button', () => ({
 import BackendNotConfigured from '../../src/app/components/BackendNotConfigured';
 
 describe('BackendNotConfigured', () => {
-  // Mock window.location.reload y window.open
-  const originalReload = window.location.reload;
   const originalOpen = window.open;
+  let reloadSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        ...window.location,
-        reload: jest.fn(),
-      },
-      writable: true,
-    });
+    // jsdom 21+ no permite redefinir location; espiar la implementación interna
+    const implSymbol = Reflect.ownKeys(window.location).find((k) => typeof k === 'symbol');
+    if (implSymbol) {
+      reloadSpy = jest.spyOn((window.location as Record<symbol, { reload: () => void }>)[implSymbol], 'reload').mockImplementation(() => {});
+    } else {
+      reloadSpy = jest.spyOn(window.location, 'reload').mockImplementation(() => {});
+    }
     window.open = jest.fn();
   });
 
   afterEach(() => {
-    window.location.reload = originalReload;
+    reloadSpy?.mockRestore();
     window.open = originalOpen;
   });
 
@@ -102,7 +101,7 @@ describe('BackendNotConfigured', () => {
     expect(reloadButton).toBeDefined();
     if (reloadButton) {
       fireEvent.click(reloadButton);
-      expect(window.location.reload).toHaveBeenCalled();
+      expect(reloadSpy).toHaveBeenCalled();
     }
   });
 
