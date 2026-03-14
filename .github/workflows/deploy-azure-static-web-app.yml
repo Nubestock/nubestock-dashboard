@@ -1,3 +1,4 @@
+# Workflow DESHABILITADO temporalmente (se usa develop_fn-nubestock-frontend.yml + nubestock-workflows)
 name: Azure Static Web Apps CI/CD
 
 on:
@@ -11,6 +12,7 @@ on:
 
 jobs:
   build:
+    if: false  # Deshabilitado temporalmente
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
