@@ -330,13 +330,13 @@ describe('ClientManagement', () => {
       expect(screen.getByText('Total')).toBeInTheDocument();
       expect(screen.getByText('Activos')).toBeInTheDocument();
       expect(screen.getByText('Con Crédito')).toBeInTheDocument();
-      expect(screen.getByText('Crédito Total')).toBeInTheDocument();
+      // Card "Crédito Total" fue comentado en la UI
     });
 
     it('should render correct statistics values', () => {
       render(<ClientManagement />);
 
-      // Total: 3, Activos: 2, Con Crédito: 2, Crédito Total: 8K (5000+3000)
+      // Total: 3, Activos: 2, Con Crédito: 2 (card Crédito Total fue comentado)
       const cards = screen.getAllByTestId('card-content');
       const cardText = cards.map(c => c.textContent).join(' ');
       expect(cardText).toMatch(/3/);
@@ -344,9 +344,6 @@ describe('ClientManagement', () => {
       expect(screen.getByText('Total')).toBeInTheDocument();
       expect(screen.getByText('Activos')).toBeInTheDocument();
       expect(screen.getByText('Con Crédito')).toBeInTheDocument();
-      expect(screen.getByText('Crédito Total')).toBeInTheDocument();
-      // Crédito total = 5000+3000 = 8000 -> mostrado como "8K"
-      expect(screen.getByText('8K')).toBeInTheDocument();
     });
 
     it('should render client list', () => {
