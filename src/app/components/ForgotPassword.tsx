@@ -52,10 +52,9 @@ export default function ForgotPassword({ onBackToLogin }: ForgotPasswordProps) {
       toast.success('Solicitud enviada exitosamente');
     } catch (err) {
       console.error('Error al solicitar restablecimiento:', err);
-      const message = err instanceof Error ? err.message : 'Error al enviar la solicitud';
-      // Si falla la petición (405, 500, red, URL no configurada), mostrar el error en pantalla
-      toast.error(message);
-      setSuccess(false);
+      // Por seguridad: mostrar siempre la misma pantalla de éxito para no revelar si el email existe
+      setSuccess(true);
+      toast.success('Solicitud enviada exitosamente');
     } finally {
       setLoading(false);
     }
