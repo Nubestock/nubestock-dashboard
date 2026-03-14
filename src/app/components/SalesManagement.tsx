@@ -335,7 +335,10 @@ export default function SalesManagement() {
     total: sales.length,
     pending: sales.filter(s => s.status === 'pending').length,
     completed: sales.filter(s => s.status === 'completed').length,
-    totalAmount: sales.reduce((sum, s) => sum + Number(s.total_amount || 0), 0),
+    // Monto total: suma de total_amount solo de ventas con estado distinto de pending
+    totalAmount: sales
+      .filter(s => s.status !== 'pending')
+      .reduce((sum, s) => sum + Number(s.total_amount || 0), 0),
   };
 
   return (

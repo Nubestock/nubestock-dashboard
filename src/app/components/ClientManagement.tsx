@@ -323,6 +323,7 @@ export default function ClientManagement() {
           </CardContent>
         </Card>
         
+        {/* Card Crédito Total comentado
         <Card className="border-neutral-200">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col gap-1">
@@ -336,6 +337,7 @@ export default function ClientManagement() {
             </div>
           </CardContent>
         </Card>
+        */}
       </div>
 
       {/* Mensaje de error */}
